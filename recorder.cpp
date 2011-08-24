@@ -61,7 +61,7 @@ Recorder::Recorder()
     buffer = new float[jack_get_buffer_size(jclient) * 2];
 
     resetBuffer();
-    setPauseActivationDelay(1);
+    setPauseActivationDelay(2);
 
     stop();
 
