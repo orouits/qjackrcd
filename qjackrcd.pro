@@ -15,3 +15,8 @@ HEADERS += mainwindow.h \
 FORMS += mainwindow.ui
 RESOURCES += qjackrcd.qrc
 LIBS += -ljack -lsndfile
+
+OTHER_FILES += \
+    record-red.png \
+    record-orange.png \
+    record-green.png
