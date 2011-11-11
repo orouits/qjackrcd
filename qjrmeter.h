@@ -1,6 +1,6 @@
 // $Id$
 /***************************************************************************
- Copyright (C) 2011 - Olivier ROUITS
+ Copyright (C) 2011 - Olivier ROUITS <olivier.rouits@free.fr>
  From Giuseppe Cigala code (qvumeter)
 
  This program is free software; you can redistribute it and/or modify
