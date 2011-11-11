@@ -32,7 +32,6 @@
 #include "pprocessor.h"
 
 #define REFRESHOKMS 200
-#define REFRESHERRMS 1000
 
 namespace Ui
 {

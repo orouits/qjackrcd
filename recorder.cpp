@@ -51,8 +51,8 @@ Recorder::Recorder()
     splitMode = false;
     dirPath = getpwuid(getuid())->pw_dir;
 
-    if ((jclient = jack_client_open(JCLIENTNAME, jack_options_t(JackNullOption | JackNoStartServer | JackUseExactName), 0)) == 0) {
-        throw "Can't connect to jack server";
+    if ((jclient = jack_client_open(JCLIENTNAME, jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
+        throw "Can't start or connect to jack server";
     }
 
     iport1 = jack_port_register (jclient, "record_1", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
@@ -77,11 +77,11 @@ Recorder::Recorder()
 Recorder::~Recorder()
 {
     stop();
-    if (jclient != NULL) {
+    if (jclient) {
         jack_deactivate(jclient);
         jack_client_close(jclient);
     }
-    if (buffer != NULL ) {
+    if (buffer) {
         delete buffer;
         buffer = NULL;
     }

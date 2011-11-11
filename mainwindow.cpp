@@ -29,9 +29,6 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    recorder = NULL;
-    pprocessor = new PProcessor();
-
     timer = new QTimer(this);
     iconGreen = new QIcon(":/qjackrcd/record-green.png");
     iconRed = new QIcon(":/qjackrcd/record-red.png");
@@ -40,13 +37,21 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     ui->vuMeter->setColorBack(palette().window().color());
-    ui->statusBar->showMessage(tr("Ready"));
 
     ui->postActionCombo->addItem("OGG","sox ${0} ${0%%wav}ogg");
     ui->postActionCombo->addItem("MP3","sox ${0} ${0%%wav}mp3");
 
+    recorder = new Recorder();
+    pprocessor = new PProcessor();
+
+    ui->pauseLevelSpin->setValue(recorder->getPauseLevel());
+    ui->pauseSplitCheck->setChecked(recorder->isSplitMode());
+    ui->vuMeter->setCompLevel(recorder->getPauseLevel());
+    ui->statusBar->showMessage(tr("Ready"));
+
     connect(timer, SIGNAL(timeout()), this, SLOT(on_timer()));
 
+    timer->setInterval(REFRESHOKMS);
     timer->start();
 }
 
@@ -54,6 +59,7 @@ MainWindow::~MainWindow()
 {
     delete timer;
     if (recorder) delete recorder;
+    if (pprocessor) delete pprocessor;
     delete iconGreen;
     delete iconRed;
     delete iconOrange;
@@ -87,49 +93,32 @@ void MainWindow::on_pauseLevelSpin_valueChanged(double level)
 
 void MainWindow::on_timer()
 {
-    if (!recorder) {
-        try {
-            recorder = new Recorder();
-            //recorder->autoConnect();
-            ui->pauseLevelSpin->setValue(recorder->getPauseLevel());
-            ui->pauseSplitCheck->setChecked(recorder->isSplitMode());
-            ui->vuMeter->setCompLevel(recorder->getPauseLevel());
-            setEnabled(true);
-            timer->setInterval(REFRESHOKMS);
+    if (!recorder) return;
+    ui->vuMeter->setLeftLevel(recorder->getLeftLevel());
+    ui->vuMeter->setRightLevel(recorder->getRightLevel());
+    ui->recDiskProgress->setValue(recorder->getDiskSpace());
+    if (ui->recFileEdit->text() != recorder->getFilePath()) {
+        ui->recFileEdit->setText(recorder->getFilePath());
+        pprocessor->launchFileProcess();
+        QString str = recorder->getFilePath();
+        pprocessor->setFileName(str);
+    }
+    if (ui->postLastEdit->text() != pprocessor->getLaunchedFileName())
+        ui->postLastEdit->setText(pprocessor->getLaunchedFileName());
+
+    if (recorder->getRecStatus() != RECOFF) {
+        if (recorder->getRecStatus() == RECWAIT) {
+            ui->recButton->setIcon(*iconOrange);
+            ui->statusBar->showMessage(tr("Waiting for sound..."));
         }
-        catch (const char* errmsg) {
-            ui->statusBar->showMessage(tr("Waiting for jack server"));
-            setDisabled(true);
-            timer->setInterval(REFRESHERRMS);
+        else {
+            ui->recButton->setIcon(*iconRed);
+            ui->statusBar->showMessage(tr("Recording..."));
         }
     }
     else {
-        ui->vuMeter->setLeftLevel(recorder->getLeftLevel());
-        ui->vuMeter->setRightLevel(recorder->getRightLevel());
-        ui->recDiskProgress->setValue(recorder->getDiskSpace());
-        if (ui->recFileEdit->text() != recorder->getFilePath()) {
-            ui->recFileEdit->setText(recorder->getFilePath());
-            pprocessor->launchFileProcess();
-            QString str = recorder->getFilePath();
-            pprocessor->setFileName(str);
-        }
-        if (ui->postLastEdit->text() != pprocessor->getLaunchedFileName())
-            ui->postLastEdit->setText(pprocessor->getLaunchedFileName());
-
-        if (recorder->getRecStatus() != RECOFF) {
-            if (recorder->getRecStatus() == RECWAIT) {
-                ui->recButton->setIcon(*iconOrange);
-                ui->statusBar->showMessage(tr("Waiting for sound..."));
-            }
-            else {
-                ui->recButton->setIcon(*iconRed);
-                ui->statusBar->showMessage(tr("Recording..."));
-            }
-        }
-        else {
-            ui->recButton->setIcon(*iconGreen);
-            ui->statusBar->showMessage(tr("Ready"));
-        }
+        ui->recButton->setIcon(*iconGreen);
+        ui->statusBar->showMessage(tr("Ready"));
     }
 }
 
