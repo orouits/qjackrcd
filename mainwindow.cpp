@@ -70,7 +70,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_recButton_clicked()
 {    
     if (!recorder) return;
-    if (recorder->getRecStatus() != RECOFF) {
+    if (recorder->getStatus() > RECOFF) {
         recorder->stop();
     }
     else {
@@ -94,6 +94,9 @@ void MainWindow::on_pauseLevelSpin_valueChanged(double level)
 void MainWindow::on_timer()
 {
     if (!recorder) return;
+    if (recorder->getStatus() < RECOFF) {
+        close();
+    }
     ui->vuMeter->setLeftLevel(recorder->getLeftLevel());
     ui->vuMeter->setRightLevel(recorder->getRightLevel());
     ui->recDiskProgress->setValue(recorder->getDiskSpace());
@@ -106,8 +109,8 @@ void MainWindow::on_timer()
     if (ui->postLastEdit->text() != pprocessor->getLaunchedFileName())
         ui->postLastEdit->setText(pprocessor->getLaunchedFileName());
 
-    if (recorder->getRecStatus() != RECOFF) {
-        if (recorder->getRecStatus() == RECWAIT) {
+    if (recorder->getStatus() > RECOFF) {
+        if (recorder->getStatus() == RECWAIT) {
             ui->recButton->setIcon(*iconOrange);
             ui->statusBar->showMessage(tr("Waiting for sound..."));
         }

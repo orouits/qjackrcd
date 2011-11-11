@@ -32,16 +32,28 @@
 #include <pwd.h>
 #include "recorder.h"
 
+//=============================================================================
+// Jack callback to object calls
+//=============================================================================
+
 int jack_process (jack_nframes_t nframes, void *recorder)
 {
     return ((Recorder*)recorder)->jackProcess(nframes);
 }
 
-
 int jack_sync (jack_transport_state_t state, jack_position_t *pos, void *recorder)
 {
     return ((Recorder*)recorder)->jackSync(state, pos);
 }
+
+void jack_shutdown (void *recorder)
+{
+    ((Recorder*)recorder)->jackShutdown();
+}
+
+//=============================================================================
+// Recorder cont/dest methods
+//=============================================================================
 
 Recorder::Recorder()
 {
@@ -62,6 +74,7 @@ Recorder::Recorder()
 
     jack_set_process_callback(jclient, jack_process, this);
     jack_set_sync_callback(jclient, jack_sync, this);
+    jack_on_shutdown (jclient, jack_shutdown, this);
 
     bufferSize = jack_get_buffer_size(jclient) * 2 * sizeof(float);
     buffer = new float[jack_get_buffer_size(jclient) * 2];
@@ -88,6 +101,87 @@ Recorder::~Recorder()
     bufferSize = 0;
 }
 
+//=============================================================================
+// Recorder jack methods
+//=============================================================================
+
+int Recorder::jackSync(jack_transport_state_t state, jack_position_t *pos)
+{
+    if (state == JackTransportStopped && status != RECOFF) {
+        stop();
+    }
+    else if (state == JackTransportStarting && status == RECOFF) {
+        start();
+    }
+    return TRUE;
+}
+
+int Recorder::jackProcess(jack_nframes_t nframes)
+{
+    jack_default_audio_sample_t *out1 = (jack_default_audio_sample_t *)jack_port_get_buffer (oport1, nframes);
+    jack_default_audio_sample_t *out2 = (jack_default_audio_sample_t *)jack_port_get_buffer (oport2, nframes);
+
+    jack_default_audio_sample_t *in1 =(jack_default_audio_sample_t *)jack_port_get_buffer (iport1, nframes);
+    jack_default_audio_sample_t *in2 =(jack_default_audio_sample_t *)jack_port_get_buffer (iport2, nframes);
+
+    computeLevel(in1, in2, nframes);
+
+    if (status > RECOFF) {
+        if (isPauseLevel()) {
+            if (pauseActivationCount < pauseActivationMax) {
+                writeBuffer(out1, out2, nframes);
+                pauseActivationCount++;
+            }
+            else if (pauseActivationCount == pauseActivationMax) {
+                writeBufferFadeout(out1, out2, nframes);
+                if (splitMode) {
+                    stop();
+                    start();
+                }
+                else
+                    pauseActivationCount++;
+            }
+            else {
+                status = RECWAIT;
+                outputNull(out1, out2, nframes);
+            }
+        }
+        else {
+            status = RECON;
+            if (pauseActivationCount > pauseActivationMax) {
+                writeBufferFadein(out1, out2, nframes);
+            }
+            else {
+                writeBuffer(out1, out2, nframes);
+            }
+            pauseActivationCount = 0;
+        }
+    }
+    else if (status == RECOFF) {
+        outputNull(out1, out2, nframes);
+    }
+
+    computeDiskSpace();
+
+    setBuffer(in1, in2, nframes);
+
+    return 0;
+}
+
+void Recorder::jackShutdown()
+{
+    status = RECSHUTDOWN;
+}
+
+//=============================================================================
+// Recorder methods
+//=============================================================================
+
+void Recorder::setPauseActivationDelay(int secs)
+{
+    pauseActivationMax = (jack_get_sample_rate(jclient) * secs ) / jack_get_buffer_size(jclient);
+}
+
 void Recorder::autoConnect()
 {
     // this function is a bad idea
@@ -112,89 +206,21 @@ void Recorder::resetConnect()
     //TODO: bad idea too...
 }
 
-void Recorder::setPauseActivationDelay(int secs)
-{
-    pauseActivationMax = (jack_get_sample_rate(jclient) * secs ) / jack_get_buffer_size(jclient);
-}
-
 QString& Recorder::start()
 {
     // start always in wait mode.
     newFile();
     pauseActivationCount = pauseActivationMax + 1;
-    recStatus = RECWAIT;
+    status = RECWAIT;
     return filePath;
 }
 
 QString& Recorder::stop()
 {
-    recStatus = RECOFF;
+    status = RECOFF;
     pauseActivationCount = 0;
     closeFile();
     return filePath;
-}
-
-int Recorder::jackSync(jack_transport_state_t state, jack_position_t *pos)
-{
-    if (state == JackTransportStopped && recStatus != RECOFF) {
-        stop();
-    }
-    else if (state == JackTransportStarting && recStatus == RECOFF) {
-        start();
-    }
-    return TRUE;
-}
-
-int Recorder::jackProcess(jack_nframes_t nframes)
-{
-    jack_default_audio_sample_t *out1 = (jack_default_audio_sample_t *)jack_port_get_buffer (oport1, nframes);
-    jack_default_audio_sample_t *out2 = (jack_default_audio_sample_t *)jack_port_get_buffer (oport2, nframes);
-
-    jack_default_audio_sample_t *in1 =(jack_default_audio_sample_t *)jack_port_get_buffer (iport1, nframes);
-    jack_default_audio_sample_t *in2 =(jack_default_audio_sample_t *)jack_port_get_buffer (iport2, nframes);
-
-    computeLevel(in1, in2, nframes);
-
-    if (recStatus != RECOFF) {
-        if (isPauseLevel()) {
-            if (pauseActivationCount < pauseActivationMax) {
-                writeBuffer(out1, out2, nframes);
-                pauseActivationCount++;
-            }
-            else if (pauseActivationCount == pauseActivationMax) {
-                writeBufferFadeout(out1, out2, nframes);
-                if (splitMode) {
-                    stop();
-                    start();
-                }
-                else
-                    pauseActivationCount++;
-            }
-            else {
-                recStatus = RECWAIT;
-                outputNull(out1, out2, nframes);
-            }
-        }
-        else {
-            recStatus = RECON;
-            if (pauseActivationCount > pauseActivationMax) {
-                writeBufferFadein(out1, out2, nframes);
-            }
-            else {
-                writeBuffer(out1, out2, nframes);
-            }
-            pauseActivationCount = 0;
-        }
-    }
-    else {
-        outputNull(out1, out2, nframes);
-    }
-
-    computeDiskSpace();
-
-    setBuffer(in1, in2, nframes);
-
-    return 0;
 }
 
 void Recorder::computeLevel(jack_default_audio_sample_t* in1, jack_default_audio_sample_t* in2, jack_nframes_t nframes) {
@@ -224,7 +250,7 @@ void Recorder::computeFilePath() {
     time(&t);
     tparts = localtime(&t);
     filePath.sprintf("%s/%s-%04d-%02d-%02dT%02d-%02d-%02d.%s", dirPath.toAscii().constData(), "qjackrcd", tparts->tm_year + 1900, tparts->tm_mon + 1, tparts->tm_mday,
-            tparts->tm_hour, tparts->tm_min, tparts->tm_sec, "wav");
+                     tparts->tm_hour, tparts->tm_min, tparts->tm_sec, "wav");
 }
 
 void Recorder::newFile() {

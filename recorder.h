@@ -31,9 +31,11 @@
 
 #define JCLIENTNAME "QJackRcd"
 #define JSYSTEMNAME "system"
-#define RECON 1
+
+#define RECON 2
+#define RECWAIT 1
 #define RECOFF 0
-#define RECWAIT -1
+#define RECSHUTDOWN -1
 
 class Recorder
 {
@@ -55,7 +57,7 @@ class Recorder
 
     float pauseLevel;
     int pauseActivationMax;
-    int recStatus;
+    int status;
     float leftLevel;
     float rightLevel;
     int pauseActivationCount;
@@ -80,15 +82,17 @@ public:
     Recorder();
     ~Recorder();
 
-    QString& start();
-    QString& stop();
     int jackProcess(jack_nframes_t nframes);
     int jackSync(jack_transport_state_t state, jack_position_t *pos);
+    void jackShutdown();
+
+    QString& start();
+    QString& stop();
     void setPauseActivationDelay(int secs);
     void autoConnect();
     void resetConnect();
 
-    int getRecStatus() { return recStatus; }
+    int getStatus() { return status; }
     void setSplitMode(bool split) { splitMode = split; }
     bool isSplitMode() { return splitMode; }
     QString& getFilePath() { return filePath; }
