@@ -44,14 +44,18 @@ MainWindow::MainWindow(QWidget *parent)
     recorder = new Recorder();
     pprocessor = new PProcessor();
 
+    readSettings();
+
     ui->pauseLevelSpin->setValue(recorder->getPauseLevel());
+    ui->pauseDelaySpin->setValue(recorder->getPauseActivationDelay());
     ui->pauseSplitCheck->setChecked(recorder->isSplitMode());
     ui->vuMeter->setCompLevel(recorder->getPauseLevel());
+    ui->postCmdEdit->setText(pprocessor->getCmdLine());
     ui->statusBar->showMessage(tr("Ready"));
 
     connect(timer, SIGNAL(timeout()), this, SLOT(on_timer()));
 
-    timer->setInterval(REFRESHOKMS);
+    timer->setInterval(REFRESHRATEMS);
     timer->start();
 }
 
@@ -140,3 +144,36 @@ void MainWindow::on_postCmdEdit_textChanged(QString text)
 {
     pprocessor->setCmdLine(text);
 }
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+     writeSettings();
+     event->accept();
+}
+void MainWindow::writeSettings()
+ {
+     QSettings settings("qjackrcd", "qjackrcd");
+
+     settings.beginGroup("Recorder");
+     settings.setValue("pauseLevel", recorder->getPauseLevel());
+     settings.setValue("pauseActivationDelay", recorder->getPauseActivationDelay());
+     settings.setValue("splitMode", recorder->isSplitMode());
+     settings.endGroup();
+     settings.beginGroup("PProcessor");
+     settings.setValue("cmdLine", pprocessor->getCmdLine());
+     settings.endGroup();
+ }
+
+ void MainWindow::readSettings()
+ {
+     QSettings settings("qjackrcd", "qjackrcd");
+
+     settings.beginGroup("Recorder");
+     recorder->setPauseLevel(settings.value("pauseLevel", -20).toInt());
+     recorder->setPauseActivationDelay(settings.value("pauseActivationDelay", 2).toInt());
+     recorder->setSplitMode(settings.value("splitMode", false).toBool());
+     settings.endGroup();
+     settings.beginGroup("PProcessor");
+     pprocessor->setCmdLine(settings.value("cmdLine", "").toString());
+     settings.endGroup();
+ }

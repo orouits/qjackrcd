@@ -31,7 +31,7 @@
 #include "recorder.h"
 #include "pprocessor.h"
 
-#define REFRESHOKMS 200
+#define REFRESHRATEMS 200
 
 namespace Ui
 {
@@ -45,6 +45,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void closeEvent(QCloseEvent *event);
+    void readSettings();
+    void writeSettings();
 
 private:
     Ui::MainWindow *ui;
@@ -54,6 +57,7 @@ private:
     QIcon *iconGreen;
     QIcon *iconRed;
     QIcon *iconOrange;
+
 
 private slots:
     void on_pauseLevelSpin_valueChanged(double );

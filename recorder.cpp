@@ -179,6 +179,7 @@ void Recorder::jackShutdown()
 
 void Recorder::setPauseActivationDelay(int secs)
 {
+    pauseActivationDelay = secs;
     pauseActivationMax = (jack_get_sample_rate(jclient) * secs ) / jack_get_buffer_size(jclient);
 }
 

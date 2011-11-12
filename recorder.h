@@ -57,6 +57,7 @@ class Recorder
 
     float pauseLevel;
     int pauseActivationMax;
+    int pauseActivationDelay;
     int status;
     float leftLevel;
     float rightLevel;
@@ -88,11 +89,12 @@ public:
 
     QString& start();
     QString& stop();
-    void setPauseActivationDelay(int secs);
     void autoConnect();
     void resetConnect();
 
     int getStatus() { return status; }
+    void setPauseActivationDelay(int secs);
+    int getPauseActivationDelay() {return pauseActivationDelay;}
     void setSplitMode(bool split) { splitMode = split; }
     bool isSplitMode() { return splitMode; }
     QString& getFilePath() { return filePath; }

@@ -40,9 +40,9 @@ public:
     void launchFileProcess();
 
     QString& getCmdLine() {return cmdLine;}
-    void setCmdLine(QString& line) {cmdLine = line;}
+    void setCmdLine(QString line) {cmdLine = line;}
     QString& getFileName() {return fileName;}
-    void setFileName(QString& fname) {fileName = fname;}
+    void setFileName(QString fname) {fileName = fname;}
     QString& getLaunchedFileName() {return launchedFileName;}
 };
 
