@@ -65,7 +65,7 @@ void QJRMeter::paintBorder()
     gradR.setColorAt(1, dark);
     gradR.setSpread(QGradient::PadSpread);
     painter.setBrush(gradR);
-    QRect borderR(QVU_WIDTH/2+1, 0, QVU_WIDTH-QVU_WIDTH/2-1, QVU_HEIGHT);
+    QRect borderR(QVU_WIDTH/2, 0, QVU_WIDTH/2, QVU_HEIGHT);
     painter.drawRect(borderR);
 }
 
@@ -79,35 +79,30 @@ void QJRMeter::paintBar()
     grad.setSpread(QGradient::PadSpread);
     painter.setBrush(grad);
 
-    // draw color bars
+    // draw color bar
     QRect barL(QVU_BORDER, QVU_BORDER, QVU_LEDWIDTH, QVU_LEDBARHEIGHT);
     painter.drawRect(barL);
-    QRect barR(QVU_WIDTH-QVU_LEDWIDTH-QVU_BORDER, QVU_BORDER, QVU_LEDWIDTH, QVU_LEDBARHEIGHT);
-    painter.drawRect(barR);
 
     // draw hiding bar
     painter.setBrush(QColor(40, 40, 40));    
     int leftHeight = QVU_LEDBARHEIGHT - (QVU_LEDHEIGHT+1) * (leftLevel-QVU_MINLEVEL);
     int rightHeight = QVU_LEDBARHEIGHT - (QVU_LEDHEIGHT+1) * (rightLevel-QVU_MINLEVEL);
-    QRect hideBarL(QVU_BORDER, QVU_BORDER, QVU_LEDWIDTH, leftHeight );
+    QRect hideBarL(QVU_BORDER, QVU_BORDER, QVU_LEDWIDTH/2, leftHeight );
     painter.drawRect(hideBarL);
-    QRect hideBarR(QVU_WIDTH-QVU_LEDWIDTH-QVU_BORDER, QVU_BORDER, QVU_LEDWIDTH, rightHeight );
+    QRect hideBarR(QVU_BORDER+QVU_LEDWIDTH/2, QVU_BORDER, QVU_LEDWIDTH/2, rightHeight );
     painter.drawRect(hideBarR);
 
     // draw led intersections
     painter.setPen(QPen(Qt::black, 1));
-    for (int i = 0; i < QVU_LEDCOUNT; i++)
-    {
+    for (int i = 0; i < QVU_LEDCOUNT; i++) {
         int y = i*(QVU_LEDHEIGHT+1) + QVU_BORDER;
         painter.drawLine(QVU_BORDER, y, QVU_BORDER + QVU_LEDWIDTH, y);
-        painter.drawLine(QVU_WIDTH-QVU_LEDWIDTH-QVU_BORDER, y, QVU_WIDTH-QVU_BORDER, y);
     }
 
     // draw pause intersection
     int y = QVU_BORDER + QVU_LEDBARHEIGHT - (QVU_LEDHEIGHT+1) * (compLevel-QVU_MINLEVEL);
     painter.setPen(QPen(Qt::white, 1));
     painter.drawLine(QVU_BORDER, y, QVU_BORDER + QVU_LEDWIDTH, y);
-    painter.drawLine(QVU_WIDTH-QVU_LEDWIDTH-QVU_BORDER, y, QVU_WIDTH-QVU_BORDER, y);
 
 }
 

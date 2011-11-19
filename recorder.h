@@ -26,34 +26,47 @@
 #define RECORDER_H
 
 #include <jack/jack.h>
+#include <jack/ringbuffer.h>
 #include <sndfile.h>
 #include <QString>
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
 
-#define JCLIENTNAME "QJackRcd"
-#define JSYSTEMNAME "system"
+#define REC_JK_NAME "QJackRcd"
+#define REC_JK_SYSTEMNAME "system"
 
-#define RECON 2
-#define RECWAIT 1
-#define RECOFF 0
-#define RECSHUTDOWN -1
+#define REC_STATUS_ON 2
+#define REC_STATUS_WAIT 1
+#define REC_STATUS_OFF 0
+#define REC_STATUS_SHUTDOWN -1
 
-class Recorder
+#define REC_RINGBUFFER_FRAMES 16384
+#define REC_RINGBUFFER_SIZE (REC_RINGBUFFER_FRAMES*sizeof(float)*2)
+#define REC_BUFFER_FRAMES 1024
+#define REC_BUFFER_SIZE (REC_BUFFER_FRAMES*sizeof(float)*2)
+
+#define REC_WAIT_TIMEOUT_MS 2000
+
+class Recorder: public QThread
 {
     SNDFILE *sndFile;
 
-    float *buffer;
-    int bufferSize;
+    float *currentBuffer;
+    float *alternateBuffer;
 
     QString dirPath;
-    QString filePath;
-    int fileSize;
     int diskSpace;
 
-    jack_client_t *jclient;
-    jack_port_t *iport1;
-    jack_port_t *iport2;
-    jack_port_t *oport1;
-    jack_port_t *oport2;
+    QString currentFilePath;
+
+    QMutex dataReadyMutex;
+    QWaitCondition dataReady;
+
+    jack_client_t *jackClient;
+    jack_ringbuffer_t *jackRingBuffer;
+    jack_port_t *jackInputPort1;
+    jack_port_t *jackInputPort2;
 
     float pauseLevel;
     int pauseActivationMax;
@@ -63,43 +76,44 @@ class Recorder
     float rightLevel;
     int pauseActivationCount;
     bool splitMode;
+    int overruns;
+    int sampleRate;
 
-    void computeLevel(jack_default_audio_sample_t* in1, jack_default_audio_sample_t* in2, jack_nframes_t nframes);
-    float computeLeveldB(jack_default_audio_sample_t* in, jack_nframes_t nframes);
+    void computeBufferLevels();
     void computeDiskSpace();
     void computeFilePath();
 
     void newFile();
     void closeFile();
 
-    void resetBuffer();
-    void setBuffer(jack_default_audio_sample_t* in1, jack_default_audio_sample_t* in2, jack_nframes_t nframes);
-    void writeBuffer(jack_default_audio_sample_t *out1, jack_default_audio_sample_t *out2, jack_nframes_t nframes);
-    void writeBufferFadeout(jack_default_audio_sample_t *out1, jack_default_audio_sample_t *out2, jack_nframes_t nframes);
-    void writeBufferFadein(jack_default_audio_sample_t *out1, jack_default_audio_sample_t *out2, jack_nframes_t nframes);
-    void outputNull(jack_default_audio_sample_t *out1, jack_default_audio_sample_t *out2, jack_nframes_t nframes);
+    void switchReadBuffer();
+    void writeAlternateBuffer();
+    void writeAlternateBufferFadeout();
+    void writeAlternateBufferFadein();
 
 public:
     Recorder();
     ~Recorder();
 
+    void run();
+
     int jackProcess(jack_nframes_t nframes);
     int jackSync(jack_transport_state_t state, jack_position_t *pos);
     void jackShutdown();
 
-    QString& start();
-    QString& stop();
+    void startRecording();
+    void stopRecording();
     void autoConnect();
     void resetConnect();
 
     int getStatus() { return status; }
-    void setPauseActivationDelay(int secs);
+    void setPauseActivationDelay(int secs) {pauseActivationDelay = secs;}
     int getPauseActivationDelay() {return pauseActivationDelay;}
     void setSplitMode(bool split) { splitMode = split; }
     bool isSplitMode() { return splitMode; }
-    QString& getFilePath() { return filePath; }
-    int getFileSize() { return fileSize; }
+    QString getCurrentFilePath() { return currentFilePath; }
     int getDiskSpace() { return diskSpace; }
+    int getOverruns() { return overruns; }
 
     void setPauseLevel(float level) { pauseLevel = level; }
     bool isPauseLevel() { return leftLevel <= pauseLevel && rightLevel <= pauseLevel; }

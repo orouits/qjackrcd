@@ -39,11 +39,11 @@ public:
     ~PProcessor();
     void launchFileProcess();
 
-    QString& getCmdLine() {return cmdLine;}
+    QString getCmdLine() {return cmdLine;}
     void setCmdLine(QString line) {cmdLine = line;}
-    QString& getFileName() {return fileName;}
+    QString getFileName() {return fileName;}
     void setFileName(QString fname) {fileName = fname;}
-    QString& getLaunchedFileName() {return launchedFileName;}
+    QString getLaunchedFileName() {return launchedFileName;}
 };
 
 #endif // PPROCESSOR_H

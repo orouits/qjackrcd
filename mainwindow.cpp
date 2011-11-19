@@ -74,11 +74,11 @@ MainWindow::~MainWindow()
 void MainWindow::on_recButton_clicked()
 {    
     if (!recorder) return;
-    if (recorder->getStatus() > RECOFF) {
-        recorder->stop();
+    if (recorder->getStatus() > REC_STATUS_OFF) {
+        recorder->stopRecording();
     }
     else {
-        recorder->start();
+        recorder->startRecording();
     }
 }
 
@@ -98,23 +98,23 @@ void MainWindow::on_pauseLevelSpin_valueChanged(double level)
 void MainWindow::on_timer()
 {
     if (!recorder) return;
-    if (recorder->getStatus() < RECOFF) {
+    if (recorder->getStatus() < REC_STATUS_OFF) {
         close();
     }
     ui->vuMeter->setLeftLevel(recorder->getLeftLevel());
     ui->vuMeter->setRightLevel(recorder->getRightLevel());
     ui->recDiskProgress->setValue(recorder->getDiskSpace());
-    if (ui->recFileEdit->text() != recorder->getFilePath()) {
-        ui->recFileEdit->setText(recorder->getFilePath());
+    if (ui->recFileEdit->text() != recorder->getCurrentFilePath()) {
+        ui->recFileEdit->setText(recorder->getCurrentFilePath());
         pprocessor->launchFileProcess();
-        QString str = recorder->getFilePath();
+        QString str = recorder->getCurrentFilePath();
         pprocessor->setFileName(str);
     }
     if (ui->postLastEdit->text() != pprocessor->getLaunchedFileName())
         ui->postLastEdit->setText(pprocessor->getLaunchedFileName());
 
-    if (recorder->getStatus() > RECOFF) {
-        if (recorder->getStatus() == RECWAIT) {
+    if (recorder->getStatus() > REC_STATUS_OFF) {
+        if (recorder->getStatus() == REC_STATUS_WAIT) {
             ui->recButton->setIcon(*iconOrange);
             ui->statusBar->showMessage(tr("Waiting for sound..."));
         }
