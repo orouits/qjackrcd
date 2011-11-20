@@ -22,13 +22,21 @@
 // $LastChangeDate$
 // $HeadURL$
 
-#include <QtGui/QApplication>
+#include <QApplication>
+#include <QLocale>
+#include <QTranslator>
 #include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    return a.exec();
+    QApplication application(argc, argv);
+
+    QString locale = QLocale::system().name().section('_', 0, 0);
+    QTranslator translator;
+    translator.load(QString("qjackrcd_") + locale);
+    application.installTranslator(&translator);
+
+    MainWindow window;
+    window.show();
+    return application.exec();
 }
