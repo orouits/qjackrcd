@@ -60,14 +60,8 @@ void jack_shutdown (void *recorder)
 Recorder::Recorder()
 {
     sndFile = NULL;
-    pauseActivationCount = 0;
-    pauseLevel = -20;
-    pauseActivationDelay = 2;
-    splitMode = false;
     dirPath = getpwuid(getuid())->pw_dir;
     overruns = 0;
-    status = REC_STATUS_OFF;
-    pauseActivationCount = 0;
 
     if ((jackClient = jack_client_open(REC_JK_NAME, jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
         throw "Can't start or connect to jack server";
@@ -90,12 +84,18 @@ Recorder::Recorder()
     alternateBuffer = new float[REC_BUFFER_FRAMES*2];
     memset(alternateBuffer, 0, REC_BUFFER_SIZE);
 
+    setRecording(false);
+    setPaused(false);
+    setSplitMode(false);
+    setPauseActivationDelay(2);
+    setPauseLevel(-20);
+
     start();
 }
 
 Recorder::~Recorder()
 {
-    status = REC_STATUS_SHUTDOWN;
+    setShutdown(true);
     wait(REC_WAIT_TIMEOUT_MS);
     if (currentBuffer) delete currentBuffer;
     if (alternateBuffer) delete alternateBuffer;
@@ -109,12 +109,10 @@ Recorder::~Recorder()
 
 int Recorder::jackSync(jack_transport_state_t state, jack_position_t *pos)
 {
-    if (state == JackTransportStopped && status != REC_STATUS_OFF) {
-        stopRecording();
-    }
-    else if (state == JackTransportStarting && status == REC_STATUS_OFF) {
-        startRecording();
-    }
+    if (state == JackTransportStopped)
+        setRecording(false);
+    else if (state == JackTransportStarting)
+        setRecording(true);
     return TRUE;
 }
 
@@ -123,10 +121,15 @@ int Recorder::jackProcess(jack_nframes_t nframes)
     jack_default_audio_sample_t *in1 =(jack_default_audio_sample_t *)jack_port_get_buffer (jackInputPort1, nframes);
     jack_default_audio_sample_t *in2 =(jack_default_audio_sample_t *)jack_port_get_buffer (jackInputPort2, nframes);
 
-    const int frame_size = sizeof(jack_default_audio_sample_t);
+    size_t frame_size = sizeof(float);
+    // tmp value to be shure of data convertion
+    float value;
+    // write interlived stereo data into the ringbuffer
     for(jack_nframes_t i = 0; i < nframes; i++) {
-        if (jack_ringbuffer_write (jackRingBuffer, (const char*)(in1+i), frame_size) < frame_size) overruns++;
-        if (jack_ringbuffer_write (jackRingBuffer, (const char*)(in2+i), frame_size) < frame_size) overruns++;
+        value = in1[i];
+        if (jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), frame_size) != frame_size) overruns++;
+        value = in2[i];
+        if (jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), frame_size) != frame_size) overruns++;
     }
 
     // wake recorder thread because there is data to process
@@ -140,7 +143,7 @@ int Recorder::jackProcess(jack_nframes_t nframes)
 
 void Recorder::jackShutdown()
 {
-    status = REC_STATUS_SHUTDOWN;
+    setShutdown(true);
 }
 
 //=============================================================================
@@ -175,21 +178,6 @@ void Recorder::resetConnect()
     //TODO: bad idea too...
 }
 
-void Recorder::startRecording()
-{
-    // start always in wait mode.
-    newFile();
-    pauseActivationCount = pauseActivationMax + 1;
-    status = REC_STATUS_WAIT;
-}
-
-void Recorder::stopRecording()
-{
-    status = REC_STATUS_OFF;
-    pauseActivationCount = 0;
-    closeFile();
-}
-
 //=============================================================================
 // Recorder internal methods
 //=============================================================================
@@ -198,71 +186,78 @@ void Recorder::run()
 {
     jack_activate(jackClient);
 
-    while (1) {
+    computePauseActivationMax();
+    // to start always in pause mode if under pause level.
+    pauseActivationCount = pauseActivationMax + 1;
+
+    while (!isShutdown()) {
         while (jack_ringbuffer_read_space(jackRingBuffer) >= REC_BUFFER_SIZE) {
 
             // switch, read and compute level buffer
-            switchReadBuffer();
-            computeBufferLevels();
+            switchBuffer();
+            readCurrentBuffer();
+            computeCurrentBufferLevels();
 
             // delay may have changed
-            pauseActivationMax = (sampleRate * pauseActivationDelay ) / REC_BUFFER_FRAMES;
+            computePauseActivationMax();
 
-            if (status > REC_STATUS_OFF) {
+            if (isRecording()) {
+                // a file must be open on theses status values
+                if (!isFile()) newFile();
+
                 if (isPauseLevel()) {
                     if (pauseActivationCount < pauseActivationMax) {
                         writeAlternateBuffer();
                         pauseActivationCount++;
+                        setPaused(false);
                     }
                     else if (pauseActivationCount == pauseActivationMax) {
-                        writeAlternateBufferFadeout();
-                        if (splitMode) {
-                            stopRecording();
-                            startRecording();
-                        }
-                        else
-                            pauseActivationCount++;
+                        fadeoutAlternateBuffer();
+                        writeAlternateBuffer();
+                        if (splitMode)
+                            newFile();
+                        pauseActivationCount++;
+                        setPaused(false);
                     }
-                    else {
-                        status = REC_STATUS_WAIT;
-                    }
+                    else
+                        setPaused(true);
                 }
                 else {
-                    status = REC_STATUS_ON;
-                    if (pauseActivationCount > pauseActivationMax) {
-                        writeAlternateBufferFadein();
-                    }
-                    else {
-                        writeAlternateBuffer();
-                    }
+                    if (pauseActivationCount > pauseActivationMax)
+                        fadeinAlternateBuffer();
+                    writeAlternateBuffer();
                     pauseActivationCount = 0;
+                    setPaused(false);
                 }
             }
-            else if (status == REC_STATUS_OFF) {
+            else {
+                closeFile();
+                // to re-start always in pause mode if under pause level.
+                pauseActivationCount = pauseActivationMax + 1;
             }
-
             computeDiskSpace();
         }
         // wait for new data
-        if (status != REC_STATUS_SHUTDOWN) {
-            dataReady.wait(&dataReadyMutex, REC_WAIT_TIMEOUT_MS);
-        }
-        else {
-            stopRecording();
-            break;
-        }
+        dataReady.wait(&dataReadyMutex, REC_WAIT_TIMEOUT_MS);
     }
 
+    closeFile();
     jack_deactivate(jackClient);
 }
 
-void Recorder::computeBufferLevels() {
+void Recorder::computePauseActivationMax() {
+    pauseActivationMax = (sampleRate * pauseActivationDelay ) / REC_BUFFER_FRAMES;
+}
+
+void Recorder::computeCurrentBufferLevels() {
     float sumsqr_l = 0;
     float sumsqr_r = 0;
     int ibuf = 0;
     for (int i = 0; i < REC_BUFFER_FRAMES; i++) {
-        sumsqr_l += currentBuffer[ibuf]*currentBuffer[ibuf++];
-        sumsqr_r += currentBuffer[ibuf]*currentBuffer[ibuf++];
+        sumsqr_l += currentBuffer[ibuf]*currentBuffer[ibuf];
+        ibuf++;
+        sumsqr_r += currentBuffer[ibuf]*currentBuffer[ibuf];
+        ibuf++;
     }
     float rms_l = sqrtf( sumsqr_l / ((float)REC_BUFFER_FRAMES) );
     float rms_r = sqrtf( sumsqr_r / ((float)REC_BUFFER_FRAMES) );
@@ -288,10 +283,12 @@ void Recorder::computeFilePath() {
 }
 
 void Recorder::newFile() {
+    closeFile();
+
     SF_INFO sfinfo;
     sfinfo.format = SF_FORMAT_WAV|SF_FORMAT_FLOAT;
     sfinfo.channels = 2;
-    sfinfo.samplerate = jack_get_sample_rate(jackClient);
+    sfinfo.samplerate = sampleRate;
     sfinfo.frames = REC_BUFFER_FRAMES;
 
     computeFilePath();
@@ -300,19 +297,24 @@ void Recorder::newFile() {
 }
 
 void Recorder::closeFile() {
-    if (sndFile != NULL) {
+    if ( isFile() ) {
         sf_close (sndFile);
         sndFile = NULL;
     }
     currentFilePath = "";
 }
 
-void Recorder::switchReadBuffer() {
-    // switch current buffer
+void Recorder::switchBuffer() {
+    // switch current and alternate buffer
     float* tmpBuffer = currentBuffer;
     currentBuffer = alternateBuffer;
     alternateBuffer = tmpBuffer;
 
+    // clean buffer
+    memset(currentBuffer, 0, REC_BUFFER_SIZE);
+}
+
+void Recorder::readCurrentBuffer() {
     // read ring buffer
     jack_ringbuffer_read(jackRingBuffer, (char*)(currentBuffer), REC_BUFFER_SIZE);
 }
@@ -321,27 +323,25 @@ void Recorder::writeAlternateBuffer() {
     sf_writef_float(sndFile, alternateBuffer, REC_BUFFER_FRAMES);
 }
 
-void Recorder::writeAlternateBufferFadein() {
+void Recorder::fadeinAlternateBuffer() {
     float gain = 0;
     float gaininc = 1 / float(REC_BUFFER_FRAMES);
     int ibuf = 0;
     for (int i = 0; i < REC_BUFFER_FRAMES; i++) {
-        alternateBuffer[ibuf] = (alternateBuffer[ibuf++] *= gain);
-        alternateBuffer[ibuf] = (alternateBuffer[ibuf++] *= gain);
+        alternateBuffer[ibuf++] *= gain;
+        alternateBuffer[ibuf++] *= gain;
         gain += gaininc;
     }
-    sf_writef_float(sndFile, alternateBuffer, REC_BUFFER_FRAMES);
 }
 
-void Recorder::writeAlternateBufferFadeout() {
+void Recorder::fadeoutAlternateBuffer() {
     float gain = 1;
     float gaininc = 1 / float(REC_BUFFER_FRAMES);
     int ibuf = 0;
     for (int i = 0; i < REC_BUFFER_FRAMES; i++) {
-        alternateBuffer[ibuf] = (alternateBuffer[ibuf++] *= gain);
-        alternateBuffer[ibuf] = (alternateBuffer[ibuf++] *= gain);
+        alternateBuffer[ibuf++] *= gain;
+        alternateBuffer[ibuf++] *= gain;
         gain -= gaininc;
     }
-    sf_writef_float(sndFile, alternateBuffer, REC_BUFFER_FRAMES);
 }
 

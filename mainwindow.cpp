@@ -74,12 +74,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_recButton_clicked()
 {    
     if (!recorder) return;
-    if (recorder->getStatus() > REC_STATUS_OFF) {
-        recorder->stopRecording();
-    }
-    else {
-        recorder->startRecording();
-    }
+    recorder->setRecording(!recorder->isRecording());
 }
 
 void MainWindow::on_pauseDelaySpin_valueChanged(double secs)
@@ -98,34 +93,36 @@ void MainWindow::on_pauseLevelSpin_valueChanged(double level)
 void MainWindow::on_timer()
 {
     if (!recorder) return;
-    if (recorder->getStatus() < REC_STATUS_OFF) {
+    if (recorder->isShutdown()) {
         close();
     }
-    ui->vuMeter->setLeftLevel(recorder->getLeftLevel());
-    ui->vuMeter->setRightLevel(recorder->getRightLevel());
-    ui->recDiskProgress->setValue(recorder->getDiskSpace());
-    if (ui->recFileEdit->text() != recorder->getCurrentFilePath()) {
-        ui->recFileEdit->setText(recorder->getCurrentFilePath());
-        pprocessor->launchFileProcess();
-        QString str = recorder->getCurrentFilePath();
-        pprocessor->setFileName(str);
-    }
-    if (ui->postLastEdit->text() != pprocessor->getLaunchedFileName())
-        ui->postLastEdit->setText(pprocessor->getLaunchedFileName());
+    else {
+        ui->vuMeter->setLeftLevel(recorder->getLeftLevel());
+        ui->vuMeter->setRightLevel(recorder->getRightLevel());
+        ui->recDiskProgress->setValue(recorder->getDiskSpace());
+        if (ui->recFileEdit->text() != recorder->getCurrentFilePath()) {
+            ui->recFileEdit->setText(recorder->getCurrentFilePath());
+            pprocessor->launchFileProcess();
+            QString str = recorder->getCurrentFilePath();
+            pprocessor->setFileName(str);
+        }
+        if (ui->postLastEdit->text() != pprocessor->getLaunchedFileName())
+            ui->postLastEdit->setText(pprocessor->getLaunchedFileName());
 
-    if (recorder->getStatus() > REC_STATUS_OFF) {
-        if (recorder->getStatus() == REC_STATUS_WAIT) {
-            ui->recButton->setIcon(*iconOrange);
-            ui->statusBar->showMessage(tr("Waiting for sound..."));
+        if (recorder->isRecording()) {
+            if (recorder->isPaused()) {
+                ui->recButton->setIcon(*iconOrange);
+                ui->statusBar->showMessage(tr("Waiting for sound..."));
+            }
+            else {
+                ui->recButton->setIcon(*iconRed);
+                ui->statusBar->showMessage(tr("Recording..."));
+            }
         }
         else {
-            ui->recButton->setIcon(*iconRed);
-            ui->statusBar->showMessage(tr("Recording..."));
+            ui->recButton->setIcon(*iconGreen);
+            ui->statusBar->showMessage(tr("Ready"));
         }
-    }
-    else {
-        ui->recButton->setIcon(*iconGreen);
-        ui->statusBar->showMessage(tr("Ready"));
     }
 }
 
@@ -147,33 +144,33 @@ void MainWindow::on_postCmdEdit_textChanged(QString text)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-     writeSettings();
-     event->accept();
+    writeSettings();
+    event->accept();
 }
 void MainWindow::writeSettings()
- {
-     QSettings settings("qjackrcd", "qjackrcd");
+{
+    QSettings settings("qjackrcd", "qjackrcd");
 
-     settings.beginGroup("Recorder");
-     settings.setValue("pauseLevel", recorder->getPauseLevel());
-     settings.setValue("pauseActivationDelay", recorder->getPauseActivationDelay());
-     settings.setValue("splitMode", recorder->isSplitMode());
-     settings.endGroup();
-     settings.beginGroup("PProcessor");
-     settings.setValue("cmdLine", pprocessor->getCmdLine());
-     settings.endGroup();
- }
+    settings.beginGroup("Recorder");
+    settings.setValue("pauseLevel", recorder->getPauseLevel());
+    settings.setValue("pauseActivationDelay", recorder->getPauseActivationDelay());
+    settings.setValue("splitMode", recorder->isSplitMode());
+    settings.endGroup();
+    settings.beginGroup("PProcessor");
+    settings.setValue("cmdLine", pprocessor->getCmdLine());
+    settings.endGroup();
+}
 
- void MainWindow::readSettings()
- {
-     QSettings settings("qjackrcd", "qjackrcd");
+void MainWindow::readSettings()
+{
+    QSettings settings("qjackrcd", "qjackrcd");
 
-     settings.beginGroup("Recorder");
-     recorder->setPauseLevel(settings.value("pauseLevel", -20).toInt());
-     recorder->setPauseActivationDelay(settings.value("pauseActivationDelay", 2).toInt());
-     recorder->setSplitMode(settings.value("splitMode", false).toBool());
-     settings.endGroup();
-     settings.beginGroup("PProcessor");
-     pprocessor->setCmdLine(settings.value("cmdLine", "").toString());
-     settings.endGroup();
- }
+    settings.beginGroup("Recorder");
+    recorder->setPauseLevel(settings.value("pauseLevel", -20).toInt());
+    recorder->setPauseActivationDelay(settings.value("pauseActivationDelay", 2).toInt());
+    recorder->setSplitMode(settings.value("splitMode", false).toBool());
+    settings.endGroup();
+    settings.beginGroup("PProcessor");
+    pprocessor->setCmdLine(settings.value("cmdLine", "").toString());
+    settings.endGroup();
+}

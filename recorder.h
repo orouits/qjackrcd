@@ -36,17 +36,12 @@
 #define REC_JK_NAME "QJackRcd"
 #define REC_JK_SYSTEMNAME "system"
 
-#define REC_STATUS_ON 2
-#define REC_STATUS_WAIT 1
-#define REC_STATUS_OFF 0
-#define REC_STATUS_SHUTDOWN -1
-
 #define REC_RINGBUFFER_FRAMES 16384
 #define REC_RINGBUFFER_SIZE (REC_RINGBUFFER_FRAMES*sizeof(float)*2)
-#define REC_BUFFER_FRAMES 1024
+#define REC_BUFFER_FRAMES 2048
 #define REC_BUFFER_SIZE (REC_BUFFER_FRAMES*sizeof(float)*2)
 
-#define REC_WAIT_TIMEOUT_MS 2000
+#define REC_WAIT_TIMEOUT_MS 1000
 
 class Recorder: public QThread
 {
@@ -71,42 +66,57 @@ class Recorder: public QThread
     float pauseLevel;
     int pauseActivationMax;
     int pauseActivationDelay;
-    int status;
-    float leftLevel;
-    float rightLevel;
     int pauseActivationCount;
     bool splitMode;
+
+    float leftLevel;
+    float rightLevel;
+
     int overruns;
     int sampleRate;
 
-    void computeBufferLevels();
+    bool paused;
+    bool recording;
+    bool shutdown;
+
     void computeDiskSpace();
     void computeFilePath();
+    void computePauseActivationMax();
 
     void newFile();
     void closeFile();
 
-    void switchReadBuffer();
+    void switchBuffer();
+    void readCurrentBuffer();
+    void computeCurrentBufferLevels();
     void writeAlternateBuffer();
-    void writeAlternateBufferFadeout();
-    void writeAlternateBufferFadein();
+    void fadeoutAlternateBuffer();
+    void fadeinAlternateBuffer();
 
-public:
-    Recorder();
-    ~Recorder();
+protected:
 
     void run();
+    bool isFile() { return sndFile != NULL; }
+    bool isPauseLevel() { return leftLevel <= pauseLevel && rightLevel <= pauseLevel; }
+    void setShutdown(bool value) { shutdown = value; }
+
+public:
+
+    Recorder();
+    ~Recorder();
 
     int jackProcess(jack_nframes_t nframes);
     int jackSync(jack_transport_state_t state, jack_position_t *pos);
     void jackShutdown();
 
-    void startRecording();
-    void stopRecording();
     void autoConnect();
     void resetConnect();
 
-    int getStatus() { return status; }
+    bool isShutdown() { return shutdown; }
+    void setRecording(bool value) { recording = value; }
+    bool isRecording() { return recording; }
+    void setPaused(bool value) { paused = value; }
+    bool isPaused() { return paused; }
     void setPauseActivationDelay(int secs) {pauseActivationDelay = secs;}
     int getPauseActivationDelay() {return pauseActivationDelay;}
     void setSplitMode(bool split) { splitMode = split; }
@@ -114,9 +124,7 @@ public:
     QString getCurrentFilePath() { return currentFilePath; }
     int getDiskSpace() { return diskSpace; }
     int getOverruns() { return overruns; }
-
     void setPauseLevel(float level) { pauseLevel = level; }
-    bool isPauseLevel() { return leftLevel <= pauseLevel && rightLevel <= pauseLevel; }
     float getPauseLevel() { return pauseLevel; }
     float getLeftLevel() { return leftLevel; }
     float getRightLevel() { return rightLevel; }
