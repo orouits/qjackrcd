@@ -77,6 +77,7 @@ Recorder::Recorder()
     jack_on_shutdown (jackClient, jack_shutdown, this);
 
     jackRingBuffer = jack_ringbuffer_create(REC_RINGBUFFER_SIZE);
+    jack_ringbuffer_reset(jackRingBuffer);
 
     currentBuffer = new float[REC_BUFFER_FRAMES*2];
     memset(currentBuffer, 0, REC_BUFFER_SIZE);
@@ -118,27 +119,35 @@ int Recorder::jackSync(jack_transport_state_t state, jack_position_t *pos)
 
 int Recorder::jackProcess(jack_nframes_t nframes)
 {
+    int rc = 0;
+
     jack_default_audio_sample_t *in1 =(jack_default_audio_sample_t *)jack_port_get_buffer (jackInputPort1, nframes);
     jack_default_audio_sample_t *in2 =(jack_default_audio_sample_t *)jack_port_get_buffer (jackInputPort2, nframes);
 
-    size_t frame_size = sizeof(float);
-    // tmp value to be shure of data convertion
-    float value;
-    // write interlived stereo data into the ringbuffer
-    for(jack_nframes_t i = 0; i < nframes; i++) {
-        value = in1[i];
-        if (jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), frame_size) != frame_size) overruns++;
-        value = in2[i];
-        if (jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), frame_size) != frame_size) overruns++;
-    }
+    size_t rbspace = jack_ringbuffer_write_space(jackRingBuffer);
 
+    if (rbspace < (2*nframes*REC_FRAME_SIZE)) {
+        overruns++;
+        rc = 1;
+    }
+    else {
+        // tmp value to be shure of data convertion
+        float value;
+
+        // write interlived stereo data into the ringbuffer
+        for(jack_nframes_t i = 0; i < nframes; i++) {
+            value = in1[i];
+            jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), REC_FRAME_SIZE);
+            value = in2[i];
+            jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), REC_FRAME_SIZE);
+        }
+    }
     // wake recorder thread because there is data to process
     if (dataReadyMutex.tryLock()) {
         dataReady.wakeAll();
         dataReadyMutex.unlock();
     }
-
-    return 0;
+    return rc;
 }
 
 void Recorder::jackShutdown()
@@ -279,7 +288,7 @@ void Recorder::computeFilePath() {
     time(&t);
     tparts = localtime(&t);
     currentFilePath.sprintf("%s/%s-%04d-%02d-%02dT%02d-%02d-%02d.%s", dirPath.toAscii().constData(), "qjackrcd", tparts->tm_year + 1900, tparts->tm_mon + 1, tparts->tm_mday,
-                     tparts->tm_hour, tparts->tm_min, tparts->tm_sec, "wav");
+                            tparts->tm_hour, tparts->tm_min, tparts->tm_sec, "wav");
 }
 
 void Recorder::newFile() {
@@ -315,7 +324,7 @@ void Recorder::switchBuffer() {
 }
 
 void Recorder::readCurrentBuffer() {
-    // read ring buffer
+    // read ringbuffer
     jack_ringbuffer_read(jackRingBuffer, (char*)(currentBuffer), REC_BUFFER_SIZE);
 }
 
