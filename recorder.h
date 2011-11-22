@@ -55,6 +55,8 @@ class Recorder: public QThread
     int diskSpace;
 
     QString currentFilePath;
+    QString processFilePath;
+    QString processCmdLine;
 
     QMutex dataReadyMutex;
     QWaitCondition dataReady;
@@ -86,6 +88,7 @@ class Recorder: public QThread
 
     void newFile();
     void closeFile();
+    void processFile();
 
     void switchBuffer();
     void readCurrentBuffer();
@@ -123,6 +126,9 @@ public:
     void setSplitMode(bool split) { splitMode = split; }
     bool isSplitMode() { return splitMode; }
     QString getCurrentFilePath() { return currentFilePath; }
+    QString getProcessFilePath() { return processFilePath; }
+    void setProcessCmdLine(QString cmdLine) { processCmdLine = cmdLine; }
+    QString getProcessCmdLine() { return processCmdLine; }
     int getDiskSpace() { return diskSpace; }
     int getOverruns() { return overruns; }
     void setPauseLevel(float level) { pauseLevel = level; }

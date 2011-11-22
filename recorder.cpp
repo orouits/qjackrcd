@@ -33,6 +33,8 @@
 #include "recorder.h"
 
 #include <QWaitCondition>
+#include <QProcess>
+#include <QFileInfo>
 
 //=============================================================================
 // Jack callback to object calls
@@ -61,6 +63,9 @@ Recorder::Recorder()
 {
     sndFile = NULL;
     dirPath = getpwuid(getuid())->pw_dir;
+    currentFilePath = "";
+    processFilePath = "";
+    processCmdLine = "";
     overruns = 0;
 
     if ((jackClient = jack_client_open(REC_JK_NAME, jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
@@ -309,6 +314,7 @@ void Recorder::closeFile() {
     if ( isFile() ) {
         sf_close (sndFile);
         sndFile = NULL;
+        processFile();
     }
     currentFilePath = "";
 }
@@ -351,6 +357,19 @@ void Recorder::fadeoutAlternateBuffer() {
         alternateBuffer[ibuf++] *= gain;
         alternateBuffer[ibuf++] *= gain;
         gain -= gaininc;
+    }
+}
+
+void Recorder::processFile()
+{
+    if (!processCmdLine.isEmpty() && !currentFilePath.isEmpty()) {
+        QStringList args;
+        args.append("-c");
+        args.append(processCmdLine);
+        args.append(currentFilePath);
+        QProcess pr;
+        pr.startDetached("bash", args);
+        processFilePath = currentFilePath;
     }
 }
 

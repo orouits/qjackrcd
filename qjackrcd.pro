@@ -6,12 +6,10 @@ TEMPLATE = app
 SOURCES += main.cpp \
     mainwindow.cpp \
     recorder.cpp \
-    qjrmeter.cpp \
-    pprocessor.cpp
+    qjrmeter.cpp
 HEADERS += mainwindow.h \
     recorder.h \
-    qjrmeter.h \
-    pprocessor.h
+    qjrmeter.h
 FORMS += mainwindow.ui
 RESOURCES += qjackrcd.qrc
 LIBS += -ljack -lsndfile

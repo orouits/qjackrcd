@@ -42,7 +42,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->postActionCombo->addItem("MP3","sox ${0} ${0%%wav}mp3");
 
     recorder = new Recorder();
-    pprocessor = new PProcessor();
 
     readSettings();
 
@@ -50,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pauseDelaySpin->setValue(recorder->getPauseActivationDelay());
     ui->pauseSplitCheck->setChecked(recorder->isSplitMode());
     ui->vuMeter->setCompLevel(recorder->getPauseLevel());
-    ui->postCmdEdit->setText(pprocessor->getCmdLine());
+    ui->postCmdEdit->setText(recorder->getProcessCmdLine());
     ui->statusBar->showMessage(tr("Ready"));
 
     connect(timer, SIGNAL(timeout()), this, SLOT(on_timer()));
@@ -63,7 +62,6 @@ MainWindow::~MainWindow()
 {
     delete timer;
     if (recorder) delete recorder;
-    if (pprocessor) delete pprocessor;
     delete iconGreen;
     delete iconRed;
     delete iconOrange;
@@ -100,15 +98,10 @@ void MainWindow::on_timer()
         ui->vuMeter->setLeftLevel(recorder->getLeftLevel());
         ui->vuMeter->setRightLevel(recorder->getRightLevel());
         ui->recDiskProgress->setValue(recorder->getDiskSpace());
-        if (ui->recFileEdit->text() != recorder->getCurrentFilePath()) {
+        if (ui->recFileEdit->text() != recorder->getCurrentFilePath())
             ui->recFileEdit->setText(recorder->getCurrentFilePath());
-            pprocessor->launchFileProcess();
-            QString str = recorder->getCurrentFilePath();
-            pprocessor->setFileName(str);
-        }
-        if (ui->postLastEdit->text() != pprocessor->getLaunchedFileName())
-            ui->postLastEdit->setText(pprocessor->getLaunchedFileName());
-
+        if (ui->postLastEdit->text() != recorder->getProcessFilePath())
+            ui->postLastEdit->setText(recorder->getProcessFilePath());
         if (recorder->isRecording()) {
             if (recorder->isPaused()) {
                 ui->recButton->setIcon(*iconOrange);
@@ -139,7 +132,7 @@ void MainWindow::on_postActionCombo_currentIndexChanged(int index)
 
 void MainWindow::on_postCmdEdit_textChanged(QString text)
 {
-    pprocessor->setCmdLine(text);
+    recorder->setProcessCmdLine(text);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -155,9 +148,7 @@ void MainWindow::writeSettings()
     settings.setValue("pauseLevel", recorder->getPauseLevel());
     settings.setValue("pauseActivationDelay", recorder->getPauseActivationDelay());
     settings.setValue("splitMode", recorder->isSplitMode());
-    settings.endGroup();
-    settings.beginGroup("PProcessor");
-    settings.setValue("cmdLine", pprocessor->getCmdLine());
+    settings.setValue("processCmdLine", recorder->getProcessCmdLine());
     settings.endGroup();
 }
 
@@ -169,8 +160,6 @@ void MainWindow::readSettings()
     recorder->setPauseLevel(settings.value("pauseLevel", -20).toInt());
     recorder->setPauseActivationDelay(settings.value("pauseActivationDelay", 2).toInt());
     recorder->setSplitMode(settings.value("splitMode", false).toBool());
-    settings.endGroup();
-    settings.beginGroup("PProcessor");
-    pprocessor->setCmdLine(settings.value("cmdLine", "").toString());
+    recorder->setProcessCmdLine(settings.value("processCmdLine", "").toString());
     settings.endGroup();
 }

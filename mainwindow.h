@@ -29,7 +29,6 @@
 #include <QIcon>
 #include <QtGui/QMainWindow>
 #include "recorder.h"
-#include "pprocessor.h"
 
 #define REFRESHRATEMS 200
 
@@ -52,7 +51,6 @@ public:
 private:
     Ui::MainWindow *ui;
     Recorder *recorder;
-    PProcessor *pprocessor;
     QTimer *timer;
     QIcon *iconGreen;
     QIcon *iconRed;
