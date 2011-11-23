@@ -92,6 +92,7 @@ Recorder::Recorder()
 
     setRecording(false);
     setPaused(false);
+    setShutdown(false);
     setSplitMode(false);
     setPauseActivationDelay(2);
     setPauseLevel(-20);
