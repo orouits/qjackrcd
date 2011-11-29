@@ -26,9 +26,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    this->recorder = recorder;
+
     timer = new QTimer(this);
     iconGreen = new QIcon(":/qjackrcd/record-green.png");
     iconRed = new QIcon(":/qjackrcd/record-red.png");
@@ -41,8 +43,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->postActionCombo->addItem("OGG","sox ${0} ${0%%wav}ogg");
     ui->postActionCombo->addItem("MP3","sox ${0} ${0%%wav}mp3");
 
-    recorder = new Recorder();
-
     readSettings();
 
     ui->pauseLevelSpin->setValue(recorder->getPauseLevel());
@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->postCmdEdit->setText(recorder->getProcessCmdLine());
     ui->statusBar->showMessage(tr("Ready"));
 
-    connect(timer, SIGNAL(timeout()), this, SLOT(on_timer()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(onTimerTimeout()));
 
     timer->setInterval(REFRESHRATEMS);
     timer->start();
@@ -61,7 +61,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete timer;
-    if (recorder) delete recorder;
     delete iconGreen;
     delete iconRed;
     delete iconOrange;
@@ -88,7 +87,7 @@ void MainWindow::on_pauseLevelSpin_valueChanged(double level)
     ui->vuMeter->setCompLevel(level);
 }
 
-void MainWindow::on_timer()
+void MainWindow::onTimerTimeout()
 {
     if (!recorder) return;
     if (recorder->isShutdown()) {

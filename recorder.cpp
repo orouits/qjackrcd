@@ -37,6 +37,21 @@
 #include <QFileInfo>
 
 //=============================================================================
+// Internal defines
+//=============================================================================
+
+#define REC_JK_INPUT_PORTNAME_1 "record_1"
+#define REC_JK_INPUT_PORTNAME_2 "record_2"
+
+#define REC_WAIT_TIMEOUT_MS 1000
+
+#define REC_FRAME_SIZE sizeof(float)
+#define REC_RINGBUFFER_FRAMES (64*1024)
+#define REC_RINGBUFFER_SIZE (2*REC_RINGBUFFER_FRAMES*REC_FRAME_SIZE)
+#define REC_BUFFER_FRAMES (2*1024)
+#define REC_BUFFER_SIZE (2*REC_BUFFER_FRAMES*REC_FRAME_SIZE)
+
+//=============================================================================
 // Jack callback to object calls
 //=============================================================================
 
@@ -50,6 +65,11 @@ int jack_sync (jack_transport_state_t state, jack_position_t *pos, void *recorde
     return ((Recorder*)recorder)->jackSync(state, pos);
 }
 
+void jack_portreg (jack_port_id_t port_id, int reg, void *recorder)
+{
+    ((Recorder*)recorder)->jackPortReg(port_id, reg);
+}
+
 void jack_shutdown (void *recorder)
 {
     ((Recorder*)recorder)->jackShutdown();
@@ -59,8 +79,9 @@ void jack_shutdown (void *recorder)
 // Recorder cont/dest methods
 //=============================================================================
 
-Recorder::Recorder()
+Recorder::Recorder(QString jackName)
 {
+    this->jackName = jackName;
     sndFile = NULL;
     dirPath = getpwuid(getuid())->pw_dir;
     currentFilePath = "";
@@ -68,18 +89,19 @@ Recorder::Recorder()
     processCmdLine = "";
     overruns = 0;
 
-    if ((jackClient = jack_client_open(REC_JK_NAME, jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
+    if ((jackClient = jack_client_open(jackName.toAscii(), jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
         throw "Can't start or connect to jack server";
     }
 
     sampleRate = jack_get_sample_rate(jackClient);
 
-    jackInputPort1 = jack_port_register (jackClient, "record_1", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-    jackInputPort2 = jack_port_register (jackClient, "record_2", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+    jackInputPort1 = jack_port_register (jackClient, REC_JK_INPUT_PORTNAME_1, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+    jackInputPort2 = jack_port_register (jackClient, REC_JK_INPUT_PORTNAME_2, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
 
     jack_set_process_callback(jackClient, jack_process, this);
     jack_set_sync_callback(jackClient, jack_sync, this);
     jack_on_shutdown (jackClient, jack_shutdown, this);
+    jack_set_port_registration_callback(jackClient, jack_portreg, this);
 
     jackRingBuffer = jack_ringbuffer_create(REC_RINGBUFFER_SIZE);
     jack_ringbuffer_reset(jackRingBuffer);
@@ -156,45 +178,38 @@ int Recorder::jackProcess(jack_nframes_t nframes)
     return rc;
 }
 
+void Recorder::jackPortReg(jack_port_id_t port_id, int reg) {
+    if (reg) {
+        jackPortRegQueue.enqueue(port_id);
+    }
+}
+
 void Recorder::jackShutdown()
 {
     setShutdown(true);
 }
 
-//=============================================================================
-// Recorder accessors
-//=============================================================================
+void Recorder::checkJackAutoConnect() {
+    while (!jackPortRegQueue.empty()) {
+        jack_port_t* port = jack_port_by_id(jackClient, jackPortRegQueue.dequeue());
+        if (jack_port_flags(port) & JackPortIsOutput) {
+            QString portname = jack_port_name(port);
+            if (jack_port_connected(jackInputPort1) == 0)
+                jack_connect(jackClient, portname.toAscii().constData(), jack_port_name(jackInputPort1) );
+            else if (jack_port_connected(jackInputPort2) == 0)
+                jack_connect(jackClient, portname.toAscii().constData(), jack_port_name(jackInputPort2) );
+
+            printf("%s\n", portname.toAscii().constData());
+        }
+    }
+}
 
 //=============================================================================
 // Recorder public methods
 //=============================================================================
 
-void Recorder::autoConnect()
-{
-    // this function is a bad idea
-    const char** lsport = jack_get_ports(jackClient,NULL,NULL,JackPortIsOutput);
-    int portidx = 0;
-    for ( const char* portname = *lsport; portname; portname = *(++lsport) ) {
-        jack_port_t* port = jack_port_by_name(jackClient, portname);
-        if (!jack_port_is_mine(jackClient, port)) {
-            if (portidx % 2 == 0)
-                jack_connect(jackClient,portname, jack_port_name(jackInputPort1) );
-            else
-                jack_connect(jackClient, portname, jack_port_name(jackInputPort2) );
-            printf("%s\n",portname);
-        }
-        portidx++;
-    }
-    //jack_free(lsport);
-}
-
-void Recorder::resetConnect()
-{
-    //TODO: bad idea too...
-}
-
 //=============================================================================
-// Recorder internal methods
+// Recorder methods
 //=============================================================================
 
 void Recorder::run()
@@ -206,6 +221,8 @@ void Recorder::run()
     pauseActivationCount = pauseActivationMax + 1;
 
     while (!isShutdown()) {
+        checkJackAutoConnect();
+
         while (jack_ringbuffer_read_space(jackRingBuffer) >= REC_BUFFER_SIZE) {
 
             // switch, read and compute level buffer

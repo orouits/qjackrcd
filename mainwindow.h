@@ -42,7 +42,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = 0);
+    MainWindow(Recorder *recorder, QWidget *parent = 0);
     ~MainWindow();
     void closeEvent(QCloseEvent *event);
     void readSettings();
@@ -61,10 +61,11 @@ private slots:
     void on_pauseLevelSpin_valueChanged(double );
     void on_pauseDelaySpin_valueChanged(double );
     void on_recButton_clicked();
-    void on_timer();
     void on_pauseSplitCheck_stateChanged(int );
     void on_postActionCombo_currentIndexChanged(int index);
     void on_postCmdEdit_textChanged(QString );
+
+    void onTimerTimeout();
 };
 
 #endif // MAINWINDOW_H

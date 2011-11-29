@@ -27,6 +27,8 @@
 #include <QTranslator>
 #include "mainwindow.h"
 
+#define REC_JK_NAME "QJackRcd"
+
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
@@ -36,7 +38,8 @@ int main(int argc, char *argv[])
     translator.load(QString("qjackrcd_") + locale);
     application.installTranslator(&translator);
 
-    MainWindow window;
+    Recorder recorder(REC_JK_NAME);
+    MainWindow window(&recorder);
     window.show();
     return application.exec();
 }

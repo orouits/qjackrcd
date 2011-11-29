@@ -32,22 +32,14 @@
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
-
-#define REC_JK_NAME "QJackRcd"
-#define REC_JK_SYSTEMNAME "system"
-
-#define REC_FRAME_SIZE sizeof(float)
-#define REC_RINGBUFFER_FRAMES (64*1024)
-#define REC_RINGBUFFER_SIZE (2*REC_RINGBUFFER_FRAMES*REC_FRAME_SIZE)
-#define REC_BUFFER_FRAMES (2*1024)
-#define REC_BUFFER_SIZE (2*REC_BUFFER_FRAMES*REC_FRAME_SIZE)
-
-#define REC_WAIT_TIMEOUT_MS 1000
+#include <QQueue>
 
 class Recorder: public QThread
 {
-    SNDFILE *sndFile;
+    QString jackName;
+    QQueue<jack_port_id_t> jackPortRegQueue;
 
+    SNDFILE *sndFile;
     float *currentBuffer;
     float *alternateBuffer;
 
@@ -97,6 +89,8 @@ class Recorder: public QThread
     void fadeoutAlternateBuffer();
     void fadeinAlternateBuffer();
 
+    void checkJackAutoConnect();
+
 protected:
 
     void run();
@@ -106,16 +100,15 @@ protected:
 
 public:
 
-    Recorder();
+    Recorder(QString jackName);
     ~Recorder();
 
     int jackProcess(jack_nframes_t nframes);
     int jackSync(jack_transport_state_t state, jack_position_t *pos);
+    void jackPortReg(jack_port_id_t port_id, int reg);
     void jackShutdown();
 
-    void autoConnect();
-    void resetConnect();
-
+    QString getJackName() {return jackName; }
     bool isShutdown() { return shutdown; }
     void setRecording(bool value) { recording = value; }
     bool isRecording() { return recording; }
