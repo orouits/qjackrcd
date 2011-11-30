@@ -18,4 +18,5 @@ OTHER_FILES += \
     record-red.png \
     record-orange.png \
     record-green.png \
-    README
+    README \
+    dist.sh
