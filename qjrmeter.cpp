@@ -52,6 +52,7 @@ void QJRMeter::paintBorder()
 
     painter.setPen(QPen(colorBack, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
+    // left round side
     QLinearGradient gradL(0, 0, QVU_BORDER, 0);
     gradL.setColorAt(0, light);
     gradL.setColorAt(1, colorBack);
@@ -60,6 +61,7 @@ void QJRMeter::paintBorder()
     QRect borderL(0, 0, QVU_WIDTH/2, QVU_HEIGHT);
     painter.drawRect(borderL);
 
+    // right round side
     QLinearGradient gradR(QVU_WIDTH-QVU_BORDER, 0, QVU_WIDTH, 0);
     gradR.setColorAt(0, colorBack);
     gradR.setColorAt(1, dark);

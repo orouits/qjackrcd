@@ -31,15 +31,20 @@
 
 int main(int argc, char *argv[])
 {
+    // The application and translator
     QApplication application(argc, argv);
-
     QString locale = QLocale::system().name().section('_', 0, 0);
     QTranslator translator;
     translator.load(QString("qjackrcd_") + locale);
     application.installTranslator(&translator);
 
+    // The recorder
     Recorder recorder(REC_JK_NAME);
+
+    // The window
     MainWindow window(&recorder);
+
+    // Go !
     window.show();
     return application.exec();
 }

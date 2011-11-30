@@ -26,9 +26,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+//=============================================================================
+// Constructor / destructor
+//=============================================================================
 MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    // the recorder given by the application.
     this->recorder = recorder;
 
     timer = new QTimer(this);
@@ -68,6 +72,10 @@ MainWindow::~MainWindow()
 }
 
 
+//=============================================================================
+// Events methods
+//=============================================================================
+
 void MainWindow::on_recButton_clicked()
 {    
     if (!recorder) return;
@@ -87,6 +95,7 @@ void MainWindow::on_pauseLevelSpin_valueChanged(double level)
     ui->vuMeter->setCompLevel(level);
 }
 
+// the timer slot show recorder state regularly
 void MainWindow::onTimerTimeout()
 {
     if (!recorder) return;
@@ -139,6 +148,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
     writeSettings();
     event->accept();
 }
+
+//=============================================================================
+// Settings methods
+//=============================================================================
+
 void MainWindow::writeSettings()
 {
     QSettings settings("qjackrcd", "qjackrcd");

@@ -88,6 +88,8 @@ Recorder::Recorder(QString jackName)
     processFilePath = "";
     processCmdLine = "";
     overruns = 0;
+    pauseActivationMax = 0;
+    pauseActivationCount = pauseActivationMax + 1;
 
     if ((jackClient = jack_client_open(jackName.toAscii(), jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
         throw "Can't start or connect to jack server";
@@ -113,19 +115,22 @@ Recorder::Recorder(QString jackName)
     memset(alternateBuffer, 0, REC_BUFFER_SIZE);
 
     setRecording(false);
-    setPaused(false);
     setShutdown(false);
     setSplitMode(false);
     setPauseActivationDelay(2);
     setPauseLevel(-20);
 
+    // start the recorder thread
     start();
 }
 
 Recorder::~Recorder()
 {
     setShutdown(true);
+    // wait for recorder thread shutdown
     wait(REC_WAIT_TIMEOUT_MS);
+
+    // free / close objects
     if (currentBuffer) delete currentBuffer;
     if (alternateBuffer) delete alternateBuffer;
     if (jackRingBuffer) jack_ringbuffer_free(jackRingBuffer);
@@ -152,9 +157,11 @@ int Recorder::jackProcess(jack_nframes_t nframes)
     jack_default_audio_sample_t *in1 =(jack_default_audio_sample_t *)jack_port_get_buffer (jackInputPort1, nframes);
     jack_default_audio_sample_t *in2 =(jack_default_audio_sample_t *)jack_port_get_buffer (jackInputPort2, nframes);
 
+    // the ringbuffer will transmit data to reorder thread (non RT)
     size_t rbspace = jack_ringbuffer_write_space(jackRingBuffer);
 
     if (rbspace < (2*nframes*REC_FRAME_SIZE)) {
+        // the ringbuffer is full, IO thread is too late because of IO locks or overloading
         overruns++;
         rc = 1;
     }
@@ -180,6 +187,7 @@ int Recorder::jackProcess(jack_nframes_t nframes)
 
 void Recorder::jackPortReg(jack_port_id_t port_id, int reg) {
     if (reg) {
+        // if a port is registerred, its ID is put in queue for processing by the recorder thread
         jackPortRegQueue.enqueue(port_id);
     }
 }
@@ -198,8 +206,7 @@ void Recorder::checkJackAutoConnect() {
                 jack_connect(jackClient, portname.toAscii().constData(), jack_port_name(jackInputPort1) );
             else if (jack_port_connected(jackInputPort2) == 0)
                 jack_connect(jackClient, portname.toAscii().constData(), jack_port_name(jackInputPort2) );
-
-            printf("%s\n", portname.toAscii().constData());
+            // printf("%s\n", portname.toAscii().constData());
         }
     }
 }
@@ -209,25 +216,37 @@ void Recorder::checkJackAutoConnect() {
 //=============================================================================
 
 //=============================================================================
-// Recorder methods
+// Recorder internal methods
 //=============================================================================
 
+// The recorder thread run function, all recording algorithm is manged from here
 void Recorder::run()
 {
+    // start jack incomming sound
     jack_activate(jackClient);
 
+    // this computed attribute must be initialized before entering the main loop
     computePauseActivationMax();
+
     // to start always in pause mode if under pause level.
     pauseActivationCount = pauseActivationMax + 1;
 
+    // the main loop (while shutdown state is off)
     while (!isShutdown()) {
+
+        // check if therre is some things to do about registration ports (queue not empty)
         checkJackAutoConnect();
 
+        // while ringbuffer has data.
         while (jack_ringbuffer_read_space(jackRingBuffer) >= REC_BUFFER_SIZE) {
 
-            // switch, read and compute level buffer
+            // switch alternate to current buffer and clean it
             switchBuffer();
+
+            // read the current buffer from ringbuffer
             readCurrentBuffer();
+
+            // comute levels (DB)
             computeCurrentBufferLevels();
 
             // delay may have changed
@@ -239,41 +258,45 @@ void Recorder::run()
 
                 if (isPauseLevel()) {
                     if (pauseActivationCount < pauseActivationMax) {
+                        // the activation delay is not reached, continue to write previous buffer
                         writeAlternateBuffer();
                         pauseActivationCount++;
-                        setPaused(false);
                     }
                     else if (pauseActivationCount == pauseActivationMax) {
+                        // the activation delay is reached, fadeout previous buffer to eliminate noises and write it.
                         fadeoutAlternateBuffer();
                         writeAlternateBuffer();
-                        if (splitMode)
+                        if (splitMode) {
+                            // new file will close current file
                             newFile();
+                        }
                         pauseActivationCount++;
-                        setPaused(false);
                     }
-                    else
-                        setPaused(true);
                 }
                 else {
                     if (pauseActivationCount > pauseActivationMax)
+                        // we were in pause satuts, fadein previous buffer to eliminate noises and write it.
                         fadeinAlternateBuffer();
                     writeAlternateBuffer();
                     pauseActivationCount = 0;
-                    setPaused(false);
                 }
             }
             else {
                 closeFile();
-                // to re-start always in pause mode if under pause level.
+                // to re-start always in pause mode.
                 pauseActivationCount = pauseActivationMax + 1;
             }
+            // update disk space compute
             computeDiskSpace();
         }
         // wait for new data
         dataReady.wait(&dataReadyMutex, REC_WAIT_TIMEOUT_MS);
     }
 
+    // to be shure that file is closed
     closeFile();
+
+    // stop jack incomming sound
     jack_deactivate(jackClient);
 }
 
@@ -315,6 +338,7 @@ void Recorder::computeFilePath() {
 }
 
 void Recorder::newFile() {
+    // new file begins always by closing current if exists
     closeFile();
 
     SF_INFO sfinfo;
@@ -329,9 +353,11 @@ void Recorder::newFile() {
 }
 
 void Recorder::closeFile() {
+    // this method is safe if no file is open.
     if ( isFile() ) {
         sf_close (sndFile);
         sndFile = NULL;
+        // closing file allways involve post processing to start.
         processFile();
     }
     currentFilePath = "";
@@ -380,6 +406,7 @@ void Recorder::fadeoutAlternateBuffer() {
 
 void Recorder::processFile()
 {
+    // only do post process if a command line is defined
     if (!processCmdLine.isEmpty() && !currentFilePath.isEmpty()) {
         QStringList args;
         args.append("-c");

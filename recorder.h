@@ -34,6 +34,8 @@
 #include <QWaitCondition>
 #include <QQueue>
 
+// Recorder class encapsulate all recording feature without GUI link
+// The recorder inherits fron Thread to manage IO recording feature and non RT activities
 class Recorder: public QThread
 {
     QString jackName;
@@ -112,8 +114,7 @@ public:
     bool isShutdown() { return shutdown; }
     void setRecording(bool value) { recording = value; }
     bool isRecording() { return recording; }
-    void setPaused(bool value) { paused = value; }
-    bool isPaused() { return paused; }
+    bool isPaused() { return pauseActivationCount > pauseActivationMax; }
     void setPauseActivationDelay(int secs) {pauseActivationDelay = secs;}
     int getPauseActivationDelay() {return pauseActivationDelay;}
     void setSplitMode(bool split) { splitMode = split; }
