@@ -4,6 +4,8 @@ VERSION=$1
 
 [ -n ${VERSION} ] || exit
 
+make distclean
+qmake -config release
 make clean
 make
 lrelease qjackrcd.pro

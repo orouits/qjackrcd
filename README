@@ -35,3 +35,30 @@ EXECUTE
 -------
 
 ./qjackrcd
+
+
+RELEASES
+--------
+
+1.0.2
+- FIX: on_timer slot warning message
+
+- Auto connection to registerred new jack ports (if no connections) to make recording ready to use when a jack player is launched
+- Minimal documentation and code comments
+
+1.0.1
+- FIX: IO file write outside RT jack call (Recorder thread + ringbuffer + mutex)
+- FIX: Bad overlaped signal after several seconds due to ringbuffer full on eeepc when fs sync
+
+- FR / EN translation activation
+- Persist configuration in QT standard application settings
+- Automatic jackd launch if not actived
+- Jack shutdown listening (exit)
+- Suppress pprocessor and integrate it into recorder class
+
+1.0.0
+- First draft with IO calls inside jack callback (bad)
+- Auto pause activation on DB threshold and delay
+- Optional split files if pause
+- Background post processing
+- Jack transport listening (start/stop)
