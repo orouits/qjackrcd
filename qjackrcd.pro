@@ -17,4 +17,5 @@ TRANSLATIONS = qjackrcd_en.ts qjackrcd_fr.ts
 OTHER_FILES += \
     record-red.png \
     record-orange.png \
-    record-green.png
+    record-green.png \
+    README

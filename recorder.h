@@ -72,7 +72,6 @@ class Recorder: public QThread
     int overruns;
     int sampleRate;
 
-    bool paused;
     bool recording;
     bool shutdown;
 
