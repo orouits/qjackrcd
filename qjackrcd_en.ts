@@ -79,18 +79,18 @@
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="54"/>
-        <location filename="mainwindow.cpp" line="128"/>
+        <location filename="mainwindow.cpp" line="57"/>
+        <location filename="mainwindow.cpp" line="125"/>
         <source>Ready</source>
         <translation>Ready</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="119"/>
+        <location filename="mainwindow.cpp" line="116"/>
         <source>Waiting for sound...</source>
         <translation>Waiting for sound...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="123"/>
+        <location filename="mainwindow.cpp" line="120"/>
         <source>Recording...</source>
         <translation>Recording...</translation>
     </message>

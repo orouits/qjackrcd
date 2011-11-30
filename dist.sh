@@ -6,14 +6,27 @@ VERSION=$1
 
 make clean
 make
-mkdir .tmp
-rm -rf .tmp/qjackrcd-${VERSION}
+lrelease qjackrcd.pro
+
+rm -rf .tmp
 mkdir -p .tmp/qjackrcd-${VERSION}
+
 cp qjackrcd .tmp/qjackrcd-${VERSION}
+cp *.qm .tmp/qjackrcd-${VERSION}
 cd .tmp
 tar -czvf qjackrcd-${VERSION}.tar.gz qjackrcd-${VERSION}
 mv qjackrcd-${VERSION}.tar.gz ..
 cd ..
-rm -rf .tmp/qjackrcd-${VERSION}
+
+rm -rf .tmp
+mkdir -p .tmp/qjackrcd-${VERSION}
+
+cp *.ui *.h *.pro *.pro.user *.cpp *.ts *.png *.qrc *.sh Makefile .tmp/qjackrcd-${VERSION}
+cd .tmp
+tar -czvf qjackrcd-src-${VERSION}.tar.gz qjackrcd-${VERSION}
+mv qjackrcd-src-${VERSION}.tar.gz ..
+cd ..
+
+rm -rf .tmp
 
 
