@@ -26,6 +26,11 @@ COMPILE
 
 make
 
+RELEASE TRADUCTIONS (en/fr)
+---------------------------
+
+lrelease qjackrec.pro
+
 EXECUTE
 -------
 
