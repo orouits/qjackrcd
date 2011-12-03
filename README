@@ -40,10 +40,14 @@ EXECUTE
 RELEASES
 --------
 
+1.0.3
+- Desktop file from "speps"
+- Italian translation from "speps"
+
 1.0.2
 - FIX: on_timer slot warning message
 
-- Auto connection to registerred new jack ports (if no connections) to make recording ready to use when a jack player is launched
+- Auto connection to registered new jack ports (if no connections) to make recording ready to use when a jack player is launched
 - Minimal documentation and code comments
 
 1.0.1
