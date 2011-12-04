@@ -41,6 +41,8 @@ RELEASES
 --------
 
 1.0.3
+- FIX: translations in /usr/share/qjackrcd/locale directory by default
+
 - Desktop file from "speps"
 - Italian translation from "speps"
 
