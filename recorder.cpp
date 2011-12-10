@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <memory.h>
-#include <time.h>
 #include <sys/statfs.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -35,6 +34,7 @@
 #include <QWaitCondition>
 #include <QProcess>
 #include <QFileInfo>
+#include <QDateTime>
 
 //=============================================================================
 // Internal defines
@@ -83,7 +83,7 @@ Recorder::Recorder(QString jackName)
 {
     this->jackName = jackName;
     sndFile = NULL;
-    dirPath = getpwuid(getuid())->pw_dir;
+    dirPath = QDir::home();
     currentFilePath = "";
     processFilePath = "";
     processCmdLine = "";
@@ -222,6 +222,8 @@ void Recorder::checkJackAutoConnect() {
 // The recorder thread run function, all recording algorithm is manged from here
 void Recorder::run()
 {
+    int loopCounter = 0;
+
     // start jack incomming sound
     jack_activate(jackClient);
 
@@ -230,6 +232,9 @@ void Recorder::run()
 
     // to start always in pause mode if under pause level.
     pauseActivationCount = pauseActivationMax + 1;
+
+    // initial signal for listeners
+    emit statusChanged();
 
     // the main loop (while shutdown state is off)
     while (!isShutdown()) {
@@ -288,6 +293,13 @@ void Recorder::run()
             }
             // update disk space compute
             computeDiskSpace();
+
+            if (loopCounter > 4) {
+                // notify listeners
+                emit statusChanged();
+                loopCounter = 0;
+            }
+            else loopCounter++;
         }
         // wait for new data
         dataReady.wait(&dataReadyMutex, REC_WAIT_TIMEOUT_MS);
@@ -324,17 +336,15 @@ void Recorder::computeCurrentBufferLevels() {
 
 void Recorder::computeDiskSpace() {
     struct statfs stats;
-    statfs(dirPath.toAscii().constData(), &stats);
+    statfs(dirPath.path().toAscii().constData(), &stats);
     diskSpace = 100 - (stats.f_bavail * 100) / stats.f_blocks;
 }
 
 void Recorder::computeFilePath() {
-    time_t t;
-    struct tm *tparts;
-    time(&t);
-    tparts = localtime(&t);
-    currentFilePath.sprintf("%s/%s-%04d-%02d-%02dT%02d-%02d-%02d.%s", dirPath.toAscii().constData(), "qjackrcd", tparts->tm_year + 1900, tparts->tm_mon + 1, tparts->tm_mday,
-                            tparts->tm_hour, tparts->tm_min, tparts->tm_sec, "wav");
+    currentFilePath = dirPath.absoluteFilePath(
+                jackName.toLower()
+                + "-" + QDateTime::currentDateTime().toString("yyyy-MM-ddThh-mm-ss")
+                + ".wav" );
 }
 
 void Recorder::newFile() {

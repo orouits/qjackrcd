@@ -51,7 +51,6 @@ public:
 private:
     Ui::MainWindow *ui;
     Recorder *recorder;
-    QTimer *timer;
     QIcon *iconGreen;
     QIcon *iconRed;
     QIcon *iconOrange;
@@ -65,7 +64,7 @@ private slots:
     void on_postActionCombo_currentIndexChanged(int index);
     void on_postCmdEdit_textChanged(QString );
 
-    void onTimerTimeout();
+    void onRecorderStatusChanged();
 };
 
 #endif // MAINWINDOW_H

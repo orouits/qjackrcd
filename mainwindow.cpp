@@ -35,7 +35,6 @@ MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
     // the recorder given by the application.
     this->recorder = recorder;
 
-    timer = new QTimer(this);
     iconGreen = new QIcon(":/qjackrcd/record-green.png");
     iconRed = new QIcon(":/qjackrcd/record-red.png");
     iconOrange= new QIcon(":/qjackrcd/record-orange.png");
@@ -56,15 +55,11 @@ MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
     ui->postCmdEdit->setText(recorder->getProcessCmdLine());
     ui->statusBar->showMessage(tr("Ready"));
 
-    connect(timer, SIGNAL(timeout()), this, SLOT(onTimerTimeout()));
-
-    timer->setInterval(REFRESHRATEMS);
-    timer->start();
+    connect(recorder, SIGNAL(statusChanged()), this, SLOT(onRecorderStatusChanged()));
 }
 
 MainWindow::~MainWindow()
 {
-    delete timer;
     delete iconGreen;
     delete iconRed;
     delete iconOrange;
@@ -78,27 +73,23 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_recButton_clicked()
 {    
-    if (!recorder) return;
     recorder->setRecording(!recorder->isRecording());
 }
 
 void MainWindow::on_pauseDelaySpin_valueChanged(double secs)
 {
-    if (!recorder) return;
     recorder->setPauseActivationDelay(secs);
 }
 
 void MainWindow::on_pauseLevelSpin_valueChanged(double level)
 {
-    if (!recorder) return;
     recorder->setPauseLevel(level);
     ui->vuMeter->setCompLevel(level);
 }
 
 // the timer slot show recorder state regularly
-void MainWindow::onTimerTimeout()
+void MainWindow::onRecorderStatusChanged()
 {
-    if (!recorder) return;
     if (recorder->isShutdown()) {
         close();
     }
@@ -129,7 +120,6 @@ void MainWindow::onTimerTimeout()
 
 void MainWindow::on_pauseSplitCheck_stateChanged(int value)
 {
-    if (!recorder) return;
     recorder->setSplitMode(value != 0);
 }
 

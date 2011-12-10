@@ -33,11 +33,15 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QQueue>
+#include <QDir>
+
 
 // Recorder class encapsulate all recording feature without GUI link
 // The recorder inherits fron Thread to manage IO recording feature and non RT activities
 class Recorder: public QThread
 {
+    Q_OBJECT
+
     QString jackName;
     QQueue<jack_port_id_t> jackPortRegQueue;
 
@@ -45,7 +49,7 @@ class Recorder: public QThread
     float *currentBuffer;
     float *alternateBuffer;
 
-    QString dirPath;
+    QDir dirPath;
     int diskSpace;
 
     QString currentFilePath;
@@ -128,6 +132,9 @@ public:
     float getPauseLevel() { return pauseLevel; }
     float getLeftLevel() { return leftLevel; }
     float getRightLevel() { return rightLevel; }
+
+signals:
+    void statusChanged();
 };
 
 #endif // RECORDER_H
