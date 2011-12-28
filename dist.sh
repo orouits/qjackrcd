@@ -8,7 +8,6 @@ make distclean
 qmake -config release
 make clean
 make
-lrelease qjackrcd.pro
 
 rm -rf .tmp
 mkdir -p .tmp/qjackrcd-${VERSION}
