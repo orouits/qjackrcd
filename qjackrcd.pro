@@ -14,6 +14,7 @@ OBJECTS_DIR = build
 MOC_DIR = build
 RCC_DIR = build
 UI_DIR = build
+LOCALE_DIR = locale
 
 SOURCES += main.cpp \
     mainwindow.cpp \
@@ -41,33 +42,38 @@ OTHER_FILES += \
     README \
     dist.sh \
 
+# prepare target
+prepare.target = prepare
+prepare.commands =  test -d $$UI_DIR || mkdir -p $$UI_DIR; \
+    test -d $$LOCALE_DIR || mkdir -p $$LOCALE_DIR;
+prepare.depends = 
+QMAKE_EXTRA_TARGETS += prepare
+PRE_TARGETDEPS += prepare
+
 # custom translation compiler
 updateqm.input = TRANSLATIONS
-updateqm.output = locale/${QMAKE_FILE_BASE}.qm
-updateqm.commands = $$QMAKE_LRELEASE ${QMAKE_FILE_IN} -qm locale/${QMAKE_FILE_BASE}.qm
+updateqm.output = $$LOCALE_DIR/${QMAKE_FILE_BASE}.qm
+updateqm.commands = $$QMAKE_LRELEASE ${QMAKE_FILE_IN} -qm $$LOCALE_DIR/${QMAKE_FILE_BASE}.qm
 updateqm.CONFIG += no_link target_predeps
 QMAKE_EXTRA_COMPILERS += updateqm
 
 # custom inslall files
 target.path = $$BINDIR
-
 translations.path = $$DATADIR/qjackrcd
-translations.files = locale
-
+translations.files = $$LOCALE_DIR
 desktop.path = $$DATADIR/applications
 desktop.files = qjackrcd.desktop
-
 icon.path = $$DATADIR/pixmaps
 icon.files = qjackrcd.png
-
 INSTALLS += target \
             translations \
             desktop \
             icon
 
 # custom docs target
-dox.target = docs
-dox.commands = doxygen Doxyfile
-dox.depends = $$SOURCES $$HEADERS
-QMAKE_EXTRA_TARGETS += dox
-QMAKE_CLEAN += -r $$dox.target
+docs.target = docs
+docs.commands = doxygen Doxyfile
+docs.depends = Doxyfile $$SOURCES $$HEADERS
+QMAKE_EXTRA_TARGETS += docs
+QMAKE_CLEAN += -r $$docs.target
+PRE_TARGETDEPS += docs
