@@ -3,5 +3,6 @@
         <file>record-red.png</file>
         <file>record-green.png</file>
         <file>record-orange.png</file>
+        <file>qjackrcd.png</file>
     </qresource>
 </RCC>

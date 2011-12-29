@@ -26,7 +26,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="qjackrcd.qrc">
-    <normaloff>:/qjackrcd/record-red.png</normaloff>:/qjackrcd/record-red.png</iconset>
+    <normaloff>:/qjackrcd/qjackrcd.png</normaloff>:/qjackrcd/qjackrcd.png</iconset>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -165,7 +165,7 @@
        <bool>false</bool>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabPause">
        <attribute name="title">

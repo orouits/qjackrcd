@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     QString locale = QLocale::system().name();
     QTranslator translator;
     if (!translator.load(QString("qjackrcd_") + locale, "/usr/share/qjackrcd/locale"))
-        translator.load(QString("qjackrcd_") + locale); // for tests inplace
+        translator.load(QString("qjackrcd_") + locale, "locale"); // for tests inplace
     application.installTranslator(&translator);
 
     // The recorder

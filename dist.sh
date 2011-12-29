@@ -1,33 +1,33 @@
 #!/bin/bash
 
-VERSION=$1
+RELEASE="${1:-SNAPSHOT}"
+TAGIT="${2:-nt}"
 
-[ -n ${VERSION} ] || exit
+ARCNAME="qjackrcd-${RELEASE}"
 
-make distclean
+echo "### Clean all"
+rm "${ARCNAME}.tar.gz" &>/dev/null
+rm -rf ".tmp" &>/dev/null
+make distclean  &>/dev/null
+
+echo "### Make release ${ARCNAME} from scratch"
 qmake -config release
-make clean
 make
 
-rm -rf .tmp
-mkdir -p .tmp/qjackrcd-${VERSION}
+echo "### Make tar file ${ARCNAME}.tar.gz"
+mkdir -p ".tmp/${ARCNAME}"
 
-cp qjackrcd .tmp/qjackrcd-${VERSION}
-cp *.qm .tmp/qjackrcd-${VERSION}
+cp -r * .tmp/${ARCNAME}
 cd .tmp
-tar -czvf qjackrcd-${VERSION}.tar.gz qjackrcd-${VERSION}
-mv qjackrcd-${VERSION}.tar.gz ..
+tar -czf "../${ARCNAME}.tar.gz" "${ARCNAME}"
 cd ..
 
-rm -rf .tmp
-mkdir -p .tmp/qjackrcd-${VERSION}
+rm -rf ".tmp"
 
-cp *.ui *.h *.pro *.pro.user *.cpp *.ts *.png *.qrc *.sh *.desktop Makefile README .tmp/qjackrcd-${VERSION}
-cd .tmp
-tar -czvf qjackrcd-src-${VERSION}.tar.gz qjackrcd-${VERSION}
-mv qjackrcd-src-${VERSION}.tar.gz ..
-cd ..
+if [[ "${TAGIT}" == "t" ]]
+then
+    echo "### Make tag in SVN /tags/${ARCNAME}"
+    svn cp . "svn+ssh://orouits@svn.code.sf.net/p/qjackrcd/code/tags/${ARCNAME}"
+fi
 
-rm -rf .tmp
-
-
+echo "### Done."
