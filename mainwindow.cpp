@@ -18,9 +18,9 @@
  ***************************************************************************/
 /**
 * @file mainwindow.cpp
-* @author $Author$
-* @date $Date$
-* @version $Revision$
+* $Author$
+* $Date$
+* $Revision$
 * @brief Implementation of MainWindow class
 */
 

@@ -18,9 +18,9 @@
  ***************************************************************************/
 /**
 * @file main.cpp
-* @author $Author$
-* @date $Date$
-* @version $Revision$
+* $Author$
+* $Date$
+* $Revision$
 *
 * QJackRcd is a simple QT application to record JACK server outputs (use it with QJackCtl)
 *

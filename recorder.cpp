@@ -18,9 +18,9 @@
  ***************************************************************************/
 /**
 * @file recorder.cpp
-* @author $Author$
-* @date $Date$
-* @version $Revision$
+* $Author$
+* $Date$
+* $Revision$
 * @brief Implementation of Recorder class
 */
 

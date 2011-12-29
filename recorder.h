@@ -18,9 +18,9 @@
  ***************************************************************************/
 /**
 * @file recorder.h
-* @author $Author$
-* @date $Date$
-* @version $Revision$
+* $Author$
+* $Date$
+* $Revision$
 * @brief Header for Recorder class
 */
 
@@ -40,7 +40,7 @@
 
 /**
 * @class Recorder
-* @brief Recorder class encapsulate all recording feature without GUI link
+* @brief Encapsulation of all recording feature without GUI link
 * The recorder inherits fron Thread to manage IO recording feature and non RT activities
 */
 class Recorder: public QThread

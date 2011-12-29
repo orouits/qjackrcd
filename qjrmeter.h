@@ -18,9 +18,9 @@
  ***************************************************************************/
 /**
 * @file qjrmeter.h
-* @author $Author$
-* @date $Date$
-* @version $Revision$
+* $Author$
+* $Date$
+* $Revision$
 * @brief Header for QJRMeter class from Giuseppe Cigala code (qvumeter)
 */
 

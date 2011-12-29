@@ -19,9 +19,9 @@
  ***************************************************************************/
 /**
 * @file qjrmeter.cpp
-* @author $Author$
-* @date $Date$
-* @version $Revision$
+* $Author$
+* $Date$
+* $Revision$
 * @brief Implementation of QJRMeter class
 */
 

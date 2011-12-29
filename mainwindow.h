@@ -18,9 +18,9 @@
  ***************************************************************************/
 /**
 * @file mainwindow.h
-* @author $Author$
-* @date $Date$
-* @version $Revision$
+* $Author$
+* $Date$
+* $Revision$
 * @brief Header for MainWindow class
 */
 
@@ -41,7 +41,7 @@ namespace Ui
 
 /**
 * @class MainWindow
-* @brief MainWindow class encapsulate the all GUI of the application
+* @brief Encapsulation of all the GUI of the application
 */
 class MainWindow : public QMainWindow
 {
