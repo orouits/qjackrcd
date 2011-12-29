@@ -1,4 +1,3 @@
-// $Id$
 /***************************************************************************
  Copyright (C) 2011 - Olivier ROUITS <olivier.rouits@free.fr>
 
@@ -17,10 +16,13 @@
  Free Software Foundation, Inc.,
  59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
-// $LastChangedBy$
-// $LastChangedRevision$
-// $LastChangeDate$
-// $HeadURL$
+/**
+* @file mainwindow.cpp
+* @author $Author$
+* @date $Date$
+* @version $Revision$
+* @brief Implementation of MainWindow class
+*/
 
 #include <stdio.h>
 #include "mainwindow.h"

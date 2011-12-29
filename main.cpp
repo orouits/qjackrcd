@@ -1,4 +1,3 @@
-// $Id$
 /***************************************************************************
  Copyright (C) 2011 - Olivier ROUITS <olivier.rouits@free.fr>
 
@@ -17,10 +16,34 @@
  Free Software Foundation, Inc.,
  59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
-// $LastChangedBy$
-// $LastChangedRevision$
-// $LastChangeDate$
-// $HeadURL$
+/**
+* @file main.cpp
+* @author $Author$
+* @date $Date$
+* @version $Revision$
+*
+* QJackRcd is a simple QT application to record JACK server outputs (use it with QJackCtl)
+*
+* The initial goal of this project is to record from an old tape, with an automatic split/pause feature when you are away. Another goal is to have a litle tool ready to use with a minimum of configuration for simple stereo recording needs.
+* It manages natively silence by threshold and activation time. Silence event can be used to pause the record or to split files by closing the current record and opening a new one.
+* Optionaly QJackRcd is enable to post-process each file record at closure in background mode. the command is a simple bash command.
+*
+* Made with QTCreator
+* It Depends on jack, sndfile and qt4 libraries.
+*/
+
+/**
+* @mainpage
+*
+* QJackRcd is a simple QT application to record JACK server outputs (use it with QJackCtl)
+*
+* The initial goal of this project is to record from an old tape, with an automatic split/pause feature when you are away. Another goal is to have a litle tool ready to use with a minimum of configuration for simple stereo recording needs.
+* It manages natively silence by threshold and activation time. Silence event can be used to pause the record or to split files by closing the current record and opening a new one.
+* Optionaly QJackRcd is enable to post-process each file record at closure in background mode. the command is a simple bash command.
+*
+* Made with QTCreator
+* It Depends on jack, sndfile and qt4 libraries.
+*/
 
 #include <QApplication>
 #include <QLocale>

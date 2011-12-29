@@ -1,7 +1,5 @@
-// $Id$
 /***************************************************************************
  Copyright (C) 2011 - Olivier ROUITS <olivier.rouits@free.fr>
- From Giuseppe Cigala code (qvumeter)
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -18,10 +16,13 @@
  Free Software Foundation, Inc.,
  59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
-// $LastChangedBy$
-// $LastChangedRevision$
-// $LastChangeDate$
-// $HeadURL$
+/**
+* @file qjrmeter.h
+* @author $Author$
+* @date $Date$
+* @version $Revision$
+* @brief Header for QJRMeter class from Giuseppe Cigala code (qvumeter)
+*/
 
 #ifndef QVUMETER_H
 #define QVUMETER_H
@@ -41,6 +42,10 @@
 #define QVU_WIDTH (2*QVU_BORDER + QVU_LEDWIDTH)
 #define QVU_HEIGHT (2*QVU_BORDER + QVU_LEDBARHEIGHT)
 
+/**
+* @class QJRMeter
+* @brief DB Meter widget for QJackRcd
+*/
 class QDESIGNER_WIDGET_EXPORT QJRMeter : public QWidget
 {
     Q_OBJECT

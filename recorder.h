@@ -1,4 +1,3 @@
-// $Id$
 /***************************************************************************
  Copyright (C) 2011 - Olivier ROUITS <olivier.rouits@free.fr>
 
@@ -17,10 +16,13 @@
  Free Software Foundation, Inc.,
  59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
-// $LastChangedBy$
-// $LastChangedRevision$
-// $LastChangeDate$
-// $HeadURL$
+/**
+* @file recorder.h
+* @author $Author$
+* @date $Date$
+* @version $Revision$
+* @brief Header for Recorder class
+*/
 
 #ifndef RECORDER_H
 #define RECORDER_H
@@ -36,8 +38,11 @@
 #include <QDir>
 
 
-// Recorder class encapsulate all recording feature without GUI link
-// The recorder inherits fron Thread to manage IO recording feature and non RT activities
+/**
+* @class Recorder
+* @brief Recorder class encapsulate all recording feature without GUI link
+* The recorder inherits fron Thread to manage IO recording feature and non RT activities
+*/
 class Recorder: public QThread
 {
     Q_OBJECT
