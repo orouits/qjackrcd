@@ -27,6 +27,15 @@
 
 #include "qjrmeter.h"
 
+#define QJRM_LEDHEIGHT 1
+#define QJRM_LEDWIDTH 10
+#define QJRM_BORDER 5
+
+#define QJRM_LEDCOUNT (QJRM_MAXLEVEL - QJRM_MINLEVEL)
+#define QJRM_LEDBARHEIGHT (QJRM_LEDCOUNT*(QJRM_LEDHEIGHT+1))
+#define QJRM_WIDTH (2*QJRM_BORDER + QJRM_LEDWIDTH)
+#define QJRM_HEIGHT (2*QJRM_BORDER + QJRM_LEDBARHEIGHT)
+
 QJRMeter::QJRMeter(QWidget *parent) : QWidget(parent)
 {
     colorBack = QColor(60, 60, 60);
@@ -34,8 +43,8 @@ QJRMeter::QJRMeter(QWidget *parent) : QWidget(parent)
     colorHigh = Qt::red;
     colorLow = Qt::green;
     compLevel = -20;
-    leftLevel = QVU_MINLEVEL;
-    rightLevel = QVU_MINLEVEL;
+    leftLevel = QJRM_MINLEVEL;
+    rightLevel = QJRM_MINLEVEL;
 
 }
 
@@ -55,21 +64,21 @@ void QJRMeter::paintBorder()
     painter.setPen(QPen(colorBack, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
     // left round side
-    QLinearGradient gradL(0, 0, QVU_BORDER, 0);
+    QLinearGradient gradL(0, 0, QJRM_BORDER, 0);
     gradL.setColorAt(0, light);
     gradL.setColorAt(1, colorBack);
     gradL.setSpread(QGradient::PadSpread);
     painter.setBrush(gradL);
-    QRect borderL(0, 0, QVU_WIDTH/2, QVU_HEIGHT);
+    QRect borderL(0, 0, QJRM_WIDTH/2, QJRM_HEIGHT);
     painter.drawRect(borderL);
 
     // right round side
-    QLinearGradient gradR(QVU_WIDTH-QVU_BORDER, 0, QVU_WIDTH, 0);
+    QLinearGradient gradR(QJRM_WIDTH-QJRM_BORDER, 0, QJRM_WIDTH, 0);
     gradR.setColorAt(0, colorBack);
     gradR.setColorAt(1, dark);
     gradR.setSpread(QGradient::PadSpread);
     painter.setBrush(gradR);
-    QRect borderR(QVU_WIDTH/2, 0, QVU_WIDTH/2, QVU_HEIGHT);
+    QRect borderR(QJRM_WIDTH/2, 0, QJRM_WIDTH/2, QJRM_HEIGHT);
     painter.drawRect(borderR);
 }
 
@@ -77,36 +86,36 @@ void QJRMeter::paintBar()
 {
     QPainter painter(this);
 
-    QLinearGradient grad(0, QVU_BORDER, 0, QVU_HEIGHT-QVU_BORDER);
+    QLinearGradient grad(0, QJRM_BORDER, 0, QJRM_HEIGHT-QJRM_BORDER);
     grad.setColorAt(0, colorHigh);
     grad.setColorAt(1, colorLow);
     grad.setSpread(QGradient::PadSpread);
     painter.setBrush(grad);
 
     // draw color bar
-    QRect barL(QVU_BORDER, QVU_BORDER, QVU_LEDWIDTH, QVU_LEDBARHEIGHT);
+    QRect barL(QJRM_BORDER, QJRM_BORDER, QJRM_LEDWIDTH, QJRM_LEDBARHEIGHT);
     painter.drawRect(barL);
 
     // draw hiding bar
     painter.setBrush(QColor(40, 40, 40));    
-    int leftHeight = QVU_LEDBARHEIGHT - (QVU_LEDHEIGHT+1) * (leftLevel-QVU_MINLEVEL);
-    int rightHeight = QVU_LEDBARHEIGHT - (QVU_LEDHEIGHT+1) * (rightLevel-QVU_MINLEVEL);
-    QRect hideBarL(QVU_BORDER, QVU_BORDER, QVU_LEDWIDTH/2, leftHeight );
+    int leftHeight = QJRM_LEDBARHEIGHT - (QJRM_LEDHEIGHT+1) * (leftLevel-QJRM_MINLEVEL);
+    int rightHeight = QJRM_LEDBARHEIGHT - (QJRM_LEDHEIGHT+1) * (rightLevel-QJRM_MINLEVEL);
+    QRect hideBarL(QJRM_BORDER, QJRM_BORDER, QJRM_LEDWIDTH/2, leftHeight );
     painter.drawRect(hideBarL);
-    QRect hideBarR(QVU_BORDER+QVU_LEDWIDTH/2, QVU_BORDER, QVU_LEDWIDTH/2, rightHeight );
+    QRect hideBarR(QJRM_BORDER+QJRM_LEDWIDTH/2, QJRM_BORDER, QJRM_LEDWIDTH/2, rightHeight );
     painter.drawRect(hideBarR);
 
     // draw led intersections
     painter.setPen(QPen(Qt::black, 1));
-    for (int i = 0; i < QVU_LEDCOUNT; i++) {
-        int y = i*(QVU_LEDHEIGHT+1) + QVU_BORDER;
-        painter.drawLine(QVU_BORDER, y, QVU_BORDER + QVU_LEDWIDTH, y);
+    for (int i = 0; i < QJRM_LEDCOUNT; i++) {
+        int y = i*(QJRM_LEDHEIGHT+1) + QJRM_BORDER;
+        painter.drawLine(QJRM_BORDER, y, QJRM_BORDER + QJRM_LEDWIDTH, y);
     }
 
     // draw pause intersection
-    int y = QVU_BORDER + QVU_LEDBARHEIGHT - (QVU_LEDHEIGHT+1) * (compLevel-QVU_MINLEVEL);
+    int y = QJRM_BORDER + QJRM_LEDBARHEIGHT - (QJRM_LEDHEIGHT+1) * (compLevel-QJRM_MINLEVEL);
     painter.setPen(QPen(Qt::white, 1));
-    painter.drawLine(QVU_BORDER, y, QVU_BORDER + QVU_LEDWIDTH, y);
+    painter.drawLine(QJRM_BORDER, y, QJRM_BORDER + QJRM_LEDWIDTH, y);
 
 }
 
@@ -138,14 +147,14 @@ void QJRMeter::setColorLow(QColor color)
 
 void QJRMeter::setLeftLevel(double level)
 {
-    if (level > QVU_MAXLEVEL)
+    if (level > QJRM_MAXLEVEL)
     {
-        leftLevel = QVU_MAXLEVEL;
+        leftLevel = QJRM_MAXLEVEL;
         update();
     }
-    else if (level < QVU_MINLEVEL)
+    else if (level < QJRM_MINLEVEL)
     {
-        leftLevel = QVU_MINLEVEL;
+        leftLevel = QJRM_MINLEVEL;
         update();
     }
     else
@@ -157,14 +166,14 @@ void QJRMeter::setLeftLevel(double level)
 
 void QJRMeter::setRightLevel(double level)
 {
-    if (level > QVU_MAXLEVEL)
+    if (level > QJRM_MAXLEVEL)
     {
-        rightLevel = QVU_MAXLEVEL;
+        rightLevel = QJRM_MAXLEVEL;
         update();
     }
-    else if (level < QVU_MINLEVEL)
+    else if (level < QJRM_MINLEVEL)
     {
-        rightLevel = QVU_MINLEVEL;
+        rightLevel = QJRM_MINLEVEL;
         update();
     }
     else
@@ -177,14 +186,14 @@ void QJRMeter::setRightLevel(double level)
 
 void QJRMeter::setCompLevel(double level)
 {
-    if (level > QVU_MAXLEVEL)
+    if (level > QJRM_MAXLEVEL)
     {
-        compLevel = QVU_MAXLEVEL;
+        compLevel = QJRM_MAXLEVEL;
         update();
     }
-    else if (level < QVU_MINLEVEL)
+    else if (level < QJRM_MINLEVEL)
     {
-        compLevel = QVU_MINLEVEL;
+        compLevel = QJRM_MINLEVEL;
         update();
     }
     else
@@ -196,12 +205,12 @@ void QJRMeter::setCompLevel(double level)
 
 QSize QJRMeter::minimumSizeHint() const
 {
-    return QSize(QVU_WIDTH, QVU_HEIGHT);
+    return QSize(QJRM_WIDTH, QJRM_HEIGHT);
 }
 
 QSize QJRMeter::sizeHint() const
 {
-    return QSize(QVU_WIDTH, QVU_HEIGHT);
+    return QSize(QJRM_WIDTH, QJRM_HEIGHT);
 }
 
 

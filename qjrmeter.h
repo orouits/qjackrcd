@@ -24,23 +24,15 @@
 * @brief Header for QJRMeter class from Giuseppe Cigala code (qvumeter)
 */
 
-#ifndef QVUMETER_H
-#define QVUMETER_H
+#ifndef QJRMETER_H
+#define QJRMETER_H
 
 #include <QtGui>
 #include <QtDesigner/QDesignerExportWidget>
 #include <math.h>
 
-#define QVU_MAXLEVEL 3
-#define QVU_MINLEVEL -40
-#define QVU_LEDHEIGHT 1
-#define QVU_LEDWIDTH 10
-#define QVU_BORDER 5
-
-#define QVU_LEDCOUNT (QVU_MAXLEVEL - QVU_MINLEVEL)
-#define QVU_LEDBARHEIGHT (QVU_LEDCOUNT*(QVU_LEDHEIGHT+1))
-#define QVU_WIDTH (2*QVU_BORDER + QVU_LEDWIDTH)
-#define QVU_HEIGHT (2*QVU_BORDER + QVU_LEDBARHEIGHT)
+#define QJRM_MAXLEVEL 3   ///< Max DB showable level by the vumeter
+#define QJRM_MINLEVEL -40 ///< Min DB showable level by the vumeter
 
 /**
 * @class QJRMeter

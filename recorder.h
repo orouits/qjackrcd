@@ -40,8 +40,8 @@
 
 /**
 * @class Recorder
-* @brief Encapsulation of all recording feature without GUI link
-* The recorder inherits fron Thread to manage IO recording feature and non RT activities
+* @brief Encapsulation of all recording feature without GUI link.
+* The recorder inherits from Thread to manage IO recording feature and non RT activities
 */
 class Recorder: public QThread
 {

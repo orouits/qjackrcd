@@ -42,16 +42,16 @@
 // Internal defines
 //=============================================================================
 
-#define REC_JK_INPUT_PORTNAME_1 "record_1"
-#define REC_JK_INPUT_PORTNAME_2 "record_2"
+#define RCD_JK_INPUT_PORTNAME_1 "record_1"
+#define RCD_JK_INPUT_PORTNAME_2 "record_2"
 
-#define REC_WAIT_TIMEOUT_MS 1000
+#define RCD_WAIT_TIMEOUT_MS 1000
 
-#define REC_FRAME_SIZE sizeof(float)
-#define REC_RINGBUFFER_FRAMES (64*1024)
-#define REC_RINGBUFFER_SIZE (2*REC_RINGBUFFER_FRAMES*REC_FRAME_SIZE)
-#define REC_BUFFER_FRAMES (2*1024)
-#define REC_BUFFER_SIZE (2*REC_BUFFER_FRAMES*REC_FRAME_SIZE)
+#define RCD_FRAME_SIZE sizeof(float)
+#define RCD_RINGBUFFER_FRAMES (64*1024)
+#define RCD_RINGBUFFER_SIZE (2*RCD_RINGBUFFER_FRAMES*RCD_FRAME_SIZE)
+#define RCD_BUFFER_FRAMES (2*1024)
+#define RCD_BUFFER_SIZE (2*RCD_BUFFER_FRAMES*RCD_FRAME_SIZE)
 
 //=============================================================================
 // Jack callback to object calls
@@ -99,22 +99,22 @@ Recorder::Recorder(QString jackName)
 
     sampleRate = jack_get_sample_rate(jackClient);
 
-    jackInputPort1 = jack_port_register (jackClient, REC_JK_INPUT_PORTNAME_1, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-    jackInputPort2 = jack_port_register (jackClient, REC_JK_INPUT_PORTNAME_2, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+    jackInputPort1 = jack_port_register (jackClient, RCD_JK_INPUT_PORTNAME_1, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+    jackInputPort2 = jack_port_register (jackClient, RCD_JK_INPUT_PORTNAME_2, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
 
     jack_set_process_callback(jackClient, jack_process, this);
     jack_set_sync_callback(jackClient, jack_sync, this);
     jack_on_shutdown (jackClient, jack_shutdown, this);
     jack_set_port_registration_callback(jackClient, jack_portreg, this);
 
-    jackRingBuffer = jack_ringbuffer_create(REC_RINGBUFFER_SIZE);
+    jackRingBuffer = jack_ringbuffer_create(RCD_RINGBUFFER_SIZE);
     jack_ringbuffer_reset(jackRingBuffer);
 
-    currentBuffer = new float[REC_BUFFER_FRAMES*2];
-    memset(currentBuffer, 0, REC_BUFFER_SIZE);
+    currentBuffer = new float[RCD_BUFFER_FRAMES*2];
+    memset(currentBuffer, 0, RCD_BUFFER_SIZE);
 
-    alternateBuffer = new float[REC_BUFFER_FRAMES*2];
-    memset(alternateBuffer, 0, REC_BUFFER_SIZE);
+    alternateBuffer = new float[RCD_BUFFER_FRAMES*2];
+    memset(alternateBuffer, 0, RCD_BUFFER_SIZE);
 
     setRecording(false);
     setShutdown(false);
@@ -130,7 +130,7 @@ Recorder::~Recorder()
 {
     setShutdown(true);
     // wait for recorder thread shutdown
-    wait(REC_WAIT_TIMEOUT_MS);
+    wait(RCD_WAIT_TIMEOUT_MS);
 
     // free / close objects
     if (currentBuffer) delete currentBuffer;
@@ -162,7 +162,7 @@ int Recorder::jackProcess(jack_nframes_t nframes)
     // the ringbuffer will transmit data to reorder thread (non RT)
     size_t rbspace = jack_ringbuffer_write_space(jackRingBuffer);
 
-    if (rbspace < (2*nframes*REC_FRAME_SIZE)) {
+    if (rbspace < (2*nframes*RCD_FRAME_SIZE)) {
         // the ringbuffer is full, IO thread is too late because of IO locks or overloading
         overruns++;
         rc = 1;
@@ -174,9 +174,9 @@ int Recorder::jackProcess(jack_nframes_t nframes)
         // write interlived stereo data into the ringbuffer
         for(jack_nframes_t i = 0; i < nframes; i++) {
             value = in1[i];
-            jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), REC_FRAME_SIZE);
+            jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), RCD_FRAME_SIZE);
             value = in2[i];
-            jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), REC_FRAME_SIZE);
+            jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), RCD_FRAME_SIZE);
         }
     }
     // wake recorder thread because there is data to process
@@ -245,7 +245,7 @@ void Recorder::run()
         checkJackAutoConnect();
 
         // while ringbuffer has data.
-        while (jack_ringbuffer_read_space(jackRingBuffer) >= REC_BUFFER_SIZE) {
+        while (jack_ringbuffer_read_space(jackRingBuffer) >= RCD_BUFFER_SIZE) {
 
             // switch alternate to current buffer and clean it
             switchBuffer();
@@ -304,7 +304,7 @@ void Recorder::run()
             else loopCounter++;
         }
         // wait for new data
-        dataReady.wait(&dataReadyMutex, REC_WAIT_TIMEOUT_MS);
+        dataReady.wait(&dataReadyMutex, RCD_WAIT_TIMEOUT_MS);
     }
 
     // to be shure that file is closed
@@ -315,21 +315,21 @@ void Recorder::run()
 }
 
 void Recorder::computePauseActivationMax() {
-    pauseActivationMax = (sampleRate * pauseActivationDelay ) / REC_BUFFER_FRAMES;
+    pauseActivationMax = (sampleRate * pauseActivationDelay ) / RCD_BUFFER_FRAMES;
 }
 
 void Recorder::computeCurrentBufferLevels() {
     float sumsqr_l = 0;
     float sumsqr_r = 0;
     int ibuf = 0;
-    for (int i = 0; i < REC_BUFFER_FRAMES; i++) {
+    for (int i = 0; i < RCD_BUFFER_FRAMES; i++) {
         sumsqr_l += currentBuffer[ibuf]*currentBuffer[ibuf];
         ibuf++;
         sumsqr_r += currentBuffer[ibuf]*currentBuffer[ibuf];
         ibuf++;
     }
-    float rms_l = sqrtf( sumsqr_l / ((float)REC_BUFFER_FRAMES) );
-    float rms_r = sqrtf( sumsqr_r / ((float)REC_BUFFER_FRAMES) );
+    float rms_l = sqrtf( sumsqr_l / ((float)RCD_BUFFER_FRAMES) );
+    float rms_r = sqrtf( sumsqr_r / ((float)RCD_BUFFER_FRAMES) );
     float db_l = log10f( rms_l ) * 10;
     float db_r = log10f( rms_r ) * 10;
     leftLevel = db_l < - 40 ? - 40 : db_l;
@@ -357,7 +357,7 @@ void Recorder::newFile() {
     sfinfo.format = SF_FORMAT_WAV|SF_FORMAT_FLOAT;
     sfinfo.channels = 2;
     sfinfo.samplerate = sampleRate;
-    sfinfo.frames = REC_BUFFER_FRAMES;
+    sfinfo.frames = RCD_BUFFER_FRAMES;
 
     computeFilePath();
 
@@ -382,23 +382,23 @@ void Recorder::switchBuffer() {
     alternateBuffer = tmpBuffer;
 
     // clean buffer
-    memset(currentBuffer, 0, REC_BUFFER_SIZE);
+    memset(currentBuffer, 0, RCD_BUFFER_SIZE);
 }
 
 void Recorder::readCurrentBuffer() {
     // read ringbuffer
-    jack_ringbuffer_read(jackRingBuffer, (char*)(currentBuffer), REC_BUFFER_SIZE);
+    jack_ringbuffer_read(jackRingBuffer, (char*)(currentBuffer), RCD_BUFFER_SIZE);
 }
 
 void Recorder::writeAlternateBuffer() {
-    sf_writef_float(sndFile, alternateBuffer, REC_BUFFER_FRAMES);
+    sf_writef_float(sndFile, alternateBuffer, RCD_BUFFER_FRAMES);
 }
 
 void Recorder::fadeinAlternateBuffer() {
     float gain = 0;
-    float gaininc = 1 / float(REC_BUFFER_FRAMES);
+    float gaininc = 1 / float(RCD_BUFFER_FRAMES);
     int ibuf = 0;
-    for (int i = 0; i < REC_BUFFER_FRAMES; i++) {
+    for (int i = 0; i < RCD_BUFFER_FRAMES; i++) {
         alternateBuffer[ibuf++] *= gain;
         alternateBuffer[ibuf++] *= gain;
         gain += gaininc;
@@ -407,9 +407,9 @@ void Recorder::fadeinAlternateBuffer() {
 
 void Recorder::fadeoutAlternateBuffer() {
     float gain = 1;
-    float gaininc = 1 / float(REC_BUFFER_FRAMES);
+    float gaininc = 1 / float(RCD_BUFFER_FRAMES);
     int ibuf = 0;
-    for (int i = 0; i < REC_BUFFER_FRAMES; i++) {
+    for (int i = 0; i < RCD_BUFFER_FRAMES; i++) {
         alternateBuffer[ibuf++] *= gain;
         alternateBuffer[ibuf++] *= gain;
         gain -= gaininc;

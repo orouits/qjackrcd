@@ -50,8 +50,16 @@
 #include <QTranslator>
 #include "mainwindow.h"
 
-#define REC_JK_NAME "QJackRcd"
+#define REC_JK_NAME "QJackRcd" ///< Name of the recorder instance used in jack client name
 
+/**
+ * @fn int main (int argc, char *argv[])
+ * @brief Program enrty.
+ *
+ * Main doesn't take any special paramerter, only standard QT parameters.
+ *
+ * @return 0 if normal GUI quit.
+ */
 int main(int argc, char *argv[])
 {
     // The application and translator

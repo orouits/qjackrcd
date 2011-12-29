@@ -32,8 +32,6 @@
 #include <QtGui/QMainWindow>
 #include "recorder.h"
 
-#define REFRESHRATEMS 200
-
 namespace Ui
 {
     class MainWindow;
