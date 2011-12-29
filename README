@@ -39,7 +39,7 @@ EXECUTE
 
 RELEASES
 --------
-1.0.4
+SNAPSHOT (=>1.0.4)
 - Czech translation from "Pavel Fric"
 - Doxygen documentation (docs subdir)
 - Refactor build, build subdir with intermediate build files
