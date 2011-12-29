@@ -9,6 +9,12 @@ isEmpty(DATADIR):DATADIR = $$PREFIX/share
 VERSION = 1.0.4
 TARGET = qjackrcd
 TEMPLATE = app
+
+OBJECTS_DIR = build
+MOC_DIR = build
+RCC_DIR = build
+UI_DIR = build
+
 SOURCES += main.cpp \
     mainwindow.cpp \
     recorder.cpp \
