@@ -40,7 +40,7 @@ TRANSLATIONS += \
 
 OTHER_FILES += \
     README \
-    pubish.sh \
+    publish.sh \
 
 # prepare target
 prepare.target = prepare
