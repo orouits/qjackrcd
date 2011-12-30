@@ -26,26 +26,26 @@ COMPILE
 
 make
 
-RELEASE TRADUCTIONS (en/fr)
----------------------------
-
-lrelease qjackrec.pro
-
 EXECUTE
 -------
 
 ./qjackrcd
 
 
+INSTALL
+-------
+
+sudo make install
+
 RELEASES
 --------
-SNAPSHOT (=>1.0.4)
+
+1.0.4
 - Czech translation from "Pavel Fric"
 - Doxygen documentation (docs subdir)
 - Refactor build, build subdir with intermediate build files
-- Refactor dist with only one tar.gz file with sources and last build and doc files
+- Refactor dist (renamed in publish) with only one tar.gz file with sources and last build and doc files
 - Integration of SVN tags in Doxygen doc.
-- Save last jack connections and replay them if possible at re-open time.
 
 1.0.3
 - FIX: translations in /usr/share/qjackrcd/locale directory by default
