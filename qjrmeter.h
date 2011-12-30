@@ -36,7 +36,7 @@
 
 /**
 * @class QJRMeter
-* @brief DB Meter widget for QJackRcd
+* @brief DB Meter widget for QJackRcd.
 */
 class QDESIGNER_WIDGET_EXPORT QJRMeter : public QWidget
 {

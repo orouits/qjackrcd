@@ -39,7 +39,7 @@ namespace Ui
 
 /**
 * @class MainWindow
-* @brief Encapsulation of all the GUI of the application
+* @brief Encapsulation of all the GUI of the application.
 */
 class MainWindow : public QMainWindow
 {

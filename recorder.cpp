@@ -179,7 +179,7 @@ int Recorder::jackProcess(jack_nframes_t nframes)
             jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), RCD_FRAME_SIZE);
         }
     }
-    // wake recorder thread because there is data to process
+    // wakeup recorder thread because there is data to process
     if (dataReadyMutex.tryLock()) {
         dataReady.wakeAll();
         dataReadyMutex.unlock();
