@@ -6,7 +6,7 @@ PUBLISH="${2:-np}"
 ARCNAME="qjackrcd-${RELEASE}"
 
 echo "### Clean all"
-rm "${ARCNAME}.tar.gz" &>/dev/null
+rm "qjackrcd-*.tar.gz" &>/dev/null
 rm -rf ".tmp" &>/dev/null
 make distclean  &>/dev/null
 
