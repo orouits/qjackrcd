@@ -30,6 +30,7 @@ then
     svn ci -m "${ARCNAME}"
     echo "### publish ${ARCNAME} archive to TESTING"
     scp "${ARCNAME}.tar.gz" "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/testing/"
+    scp README "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/"
 elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$ ]]
 then
     echo "### Make tag in SVN /tags/${ARCNAME}"
@@ -43,6 +44,7 @@ then
     svn cp . "svn+ssh://orouits@svn.code.sf.net/p/qjackrcd/code/tags/${ARCNAME}" -m "${ARCNAME}"
     echo "### publish ${ARCNAME} archive to TESTING"
     scp "${ARCNAME}.tar.gz" "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/testing/"
+    scp README "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/"
 fi
 
 echo "### Done."
