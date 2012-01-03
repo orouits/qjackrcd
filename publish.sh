@@ -12,6 +12,7 @@ make distclean  &>/dev/null
 echo "### Make release ${ARCNAME} from scratch"
 qmake -config release
 make
+make docs
 
 echo "### Make tar file ${ARCNAME}.tar.gz"
 mkdir -p ".tmp/${ARCNAME}"

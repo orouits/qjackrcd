@@ -76,4 +76,3 @@ docs.commands = doxygen Doxyfile
 docs.depends = Doxyfile $$SOURCES $$HEADERS
 QMAKE_EXTRA_TARGETS += docs
 QMAKE_CLEAN += -r $$docs.target
-PRE_TARGETDEPS += docs

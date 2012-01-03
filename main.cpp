@@ -21,15 +21,7 @@
 * $Author$
 * $Date$
 * $Revision$
-*
-* QJackRcd is a simple QT application to record JACK server outputs (use it with QJackCtl)
-*
-* The initial goal of this project is to record from an old tape, with an automatic split/pause feature when you are away. Another goal is to have a litle tool ready to use with a minimum of configuration for simple stereo recording needs.
-* It manages natively silence by threshold and activation time. Silence event can be used to pause the record or to split files by closing the current record and opening a new one.
-* Optionaly QJackRcd is enable to post-process each file record at closure in background mode. the command is a simple bash command.
-*
-* Made with QTCreator
-* It Depends on jack, sndfile and qt4 libraries.
+* @brief Main function implementation
 */
 
 /**
@@ -54,7 +46,7 @@
 
 /**
  * @fn int main (int argc, char *argv[])
- * @brief Program enrty.
+ * @brief Program entry.
  *
  * Main doesn't take any special paramerter, only standard QT parameters.
  *
@@ -66,8 +58,14 @@ int main(int argc, char *argv[])
     QApplication application(argc, argv);
     QString locale = QLocale::system().name();
     QTranslator translator;
+
+    // for packaged system install
     if (!translator.load(QString("qjackrcd_") + locale, "/usr/share/qjackrcd/locale"))
-        translator.load(QString("qjackrcd_") + locale, "locale"); // for tests inplace
+        // for install from source
+        if (!translator.load(QString("qjackrcd_") + locale, "/usr/local/share/qjackrcd/locale"))
+            // for dev test
+            translator.load(QString("qjackrcd_") + locale, "locale");
+
     application.installTranslator(&translator);
 
     // The recorder

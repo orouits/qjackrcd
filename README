@@ -39,6 +39,9 @@ sudo make install
 
 RELEASES
 --------
+SNAPSHOT
+- No translation when installed from source in /usr/local
+- Do not put Doxygen "docs" target mandatory
 
 1.0.4 (stable)
 - Czech translation from "Pavel Fric"
