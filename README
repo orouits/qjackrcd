@@ -40,10 +40,13 @@ sudo make install
 RELEASES
 --------
 
+SNAPSHOT (testing)
+-
+
 1.0.5 (stable)
 - No translation when installed from source in /usr/local
 - Do not put Doxygen "docs" target mandatory
-- Restore jack connections at launch
+- Try to restore jack connections at launch
 
 1.0.4 (stable)
 - Czech translation from "Pavel Fric"
