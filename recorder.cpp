@@ -46,6 +46,7 @@
 #define RCD_JK_INPUT_PORTNAME_2 "record_2"
 
 #define RCD_WAIT_TIMEOUT_MS 1000
+#define RCD_SIG_CHANGE_COUNT 4
 
 #define RCD_FRAME_SIZE sizeof(float)
 #define RCD_RINGBUFFER_FRAMES (64*1024)
@@ -199,23 +200,10 @@ void Recorder::jackShutdown()
     setShutdown(true);
 }
 
-void Recorder::checkJackAutoConnect() {
-    while (!jackPortRegQueue.empty()) {
-        jack_port_t* port = jack_port_by_id(jackClient, jackPortRegQueue.dequeue());
-        if (jack_port_flags(port) & JackPortIsOutput) {
-            QString portname = jack_port_name(port);
-            if (jack_port_connected(jackInputPort1) == 0)
-                jack_connect(jackClient, portname.toAscii().constData(), jack_port_name(jackInputPort1) );
-            else if (jack_port_connected(jackInputPort2) == 0)
-                jack_connect(jackClient, portname.toAscii().constData(), jack_port_name(jackInputPort2) );
-            // printf("%s\n", portname.toAscii().constData());
-        }
-    }
-}
-
 //=============================================================================
 // Recorder public methods
 //=============================================================================
+
 
 //=============================================================================
 // Recorder internal methods
@@ -296,7 +284,7 @@ void Recorder::run()
             // update disk space compute
             computeDiskSpace();
 
-            if (loopCounter > 4) {
+            if (loopCounter >= RCD_SIG_CHANGE_COUNT) {
                 // notify listeners
                 emit statusChanged();
                 loopCounter = 0;
@@ -427,6 +415,40 @@ void Recorder::processFile()
         QProcess pr;
         pr.startDetached("bash", args);
         processFilePath = currentFilePath;
+    }
+}
+
+QString Recorder::getJackConnections(jack_port_t* jackPort) {
+    const char** connections = NULL;
+    QString result = "";
+    if ((connections = jack_port_get_all_connections (jackClient, jackPort)) != NULL) {
+        for (int i = 0; connections[i]; i++) {
+            result += QString(connections[i]) + ";";
+            //printf ("%s\n", connections[i]);
+        }
+        jack_free ((void*)connections);
+    }
+    return result;
+}
+
+void Recorder::setJackConnections(QString cnxLine, jack_port_t* jackPort) {
+    QStringList strList = cnxLine.split(';', QString::SkipEmptyParts);
+    for (int i = 0; i < strList.count() ; i++) {
+        jack_connect(jackClient, strList.at(i).toAscii().constData(), jack_port_name(jackPort) );
+    }
+}
+
+
+void Recorder::checkJackAutoConnect() {
+    while (!jackPortRegQueue.empty()) {
+        jack_port_t* port = jack_port_by_id(jackClient, jackPortRegQueue.dequeue());
+        if (jack_port_flags(port) & JackPortIsOutput) {
+            QString portName = jack_port_name(port);
+            if (jack_port_connected(jackInputPort1) == 0)
+                jack_connect(jackClient, portName.toAscii().constData(), jack_port_name(jackInputPort1) );
+            else if (jack_port_connected(jackInputPort2) == 0)
+                jack_connect(jackClient, portName.toAscii().constData(), jack_port_name(jackInputPort2) );
+        }
     }
 }
 

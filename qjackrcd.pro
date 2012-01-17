@@ -40,6 +40,7 @@ TRANSLATIONS += \
 
 OTHER_FILES += \
     README \
+    LICENSE \
     publish.sh \
 
 # prepare target

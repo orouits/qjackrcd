@@ -154,6 +154,8 @@ void MainWindow::writeSettings()
     settings.setValue("pauseActivationDelay", recorder->getPauseActivationDelay());
     settings.setValue("splitMode", recorder->isSplitMode());
     settings.setValue("processCmdLine", recorder->getProcessCmdLine());
+    settings.setValue("connections1", recorder->getJackConnections1());
+    settings.setValue("connections2", recorder->getJackConnections2());
     settings.endGroup();
 }
 
@@ -162,9 +164,11 @@ void MainWindow::readSettings()
     QSettings settings("qjackrcd", "qjackrcd");
 
     settings.beginGroup("Recorder");
-    recorder->setPauseLevel(settings.value("pauseLevel", -20).toInt());
+    recorder->setPauseLevel(settings.value("pauseLevel", -20).toFloat());
     recorder->setPauseActivationDelay(settings.value("pauseActivationDelay", 2).toInt());
     recorder->setSplitMode(settings.value("splitMode", false).toBool());
     recorder->setProcessCmdLine(settings.value("processCmdLine", "").toString());
+    recorder->setJackConnections1(settings.value("connections1", "").toString());
+    recorder->setJackConnections2(settings.value("connections2", "").toString());
     settings.endGroup();
 }

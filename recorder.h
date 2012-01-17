@@ -100,6 +100,8 @@ class Recorder: public QThread
     void fadeinAlternateBuffer();
 
     void checkJackAutoConnect();
+    QString getJackConnections(jack_port_t* jackPort);
+    void setJackConnections(QString cnxLine, jack_port_t* jackPort);
 
 protected:
 
@@ -117,6 +119,11 @@ public:
     int jackSync(jack_transport_state_t state, jack_position_t *pos);
     void jackPortReg(jack_port_id_t port_id, int reg);
     void jackShutdown();
+
+    QString getJackConnections1() {return getJackConnections(jackInputPort1);}
+    QString getJackConnections2() {return getJackConnections(jackInputPort2);}
+    void setJackConnections1(QString cnxLine) {setJackConnections(cnxLine, jackInputPort1);}
+    void setJackConnections2(QString cnxLine) {setJackConnections(cnxLine, jackInputPort2);}
 
     QString getJackName() {return jackName; }
     bool isShutdown() { return shutdown; }
