@@ -55,7 +55,7 @@ SNAPSHOT (testing)
 1.0.5 (stable)
 - No translation when installed from source in /usr/local
 - Do not put Doxygen "docs" target mandatory
-- Try to restore last jack connections at launch
+- Store/Try to restore last jack connections at launch
 
 1.0.4 (stable)
 - Czech translation from "Pavel Fric"
