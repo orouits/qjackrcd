@@ -165,7 +165,7 @@ void MainWindow::readSettings()
 
     settings.beginGroup("Recorder");
     recorder->setPauseLevel(settings.value("pauseLevel", -20).toFloat());
-    recorder->setPauseActivationDelay(settings.value("pauseActivationDelay", 2).toInt());
+    recorder->setPauseActivationDelay(settings.value("pauseActivationDelay", 3).toInt());
     recorder->setSplitMode(settings.value("splitMode", false).toBool());
     recorder->setProcessCmdLine(settings.value("processCmdLine", "").toString());
     recorder->setJackConnections1(settings.value("connections1", "").toString());

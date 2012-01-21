@@ -8,7 +8,7 @@ with an automatic split/pause feature when you are away.
 
 Another goal is to have a litle tool ready to use with a minimum of configuration for simple stereo recording needs.
 
-It manages natively silence by threshold and activation time.
+It manages natively silence by threshold and delay.
 Silence event can be used to pause the record or to split files by closing the current record and opening a new one.
 
 Optionaly QJackRcd is enable to post-process each file record at closure in background mode.
@@ -30,7 +30,7 @@ make
 DOCS
 ----
 
-you must install doxygen before making dcumentations:
+you must install doxygen before making documentations:
 
 make docs
 
@@ -56,6 +56,7 @@ SNAPSHOT (testing)
 - No translation when installed from source in /usr/local
 - Do not put Doxygen "docs" target mandatory
 - Store/Try to restore last jack connections at launch
+- Default delay is 3 seconds
 
 1.0.4 (stable)
 - Czech translation from "Pavel Fric"

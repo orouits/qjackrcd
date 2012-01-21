@@ -120,7 +120,7 @@ Recorder::Recorder(QString jackName)
     setRecording(false);
     setShutdown(false);
     setSplitMode(false);
-    setPauseActivationDelay(2);
+    setPauseActivationDelay(3);
     setPauseLevel(-20);
 
     // start the recorder thread
