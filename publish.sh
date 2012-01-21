@@ -34,6 +34,7 @@ then
 elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$ ]]
 then
     echo "### Make tag in SVN /tags/${ARCNAME}"
+    svn ci -m "${ARCNAME}"
     svn cp . "svn+ssh://orouits@svn.code.sf.net/p/qjackrcd/code/tags/${ARCNAME}" -m "${ARCNAME}"
     echo "### publish ${ARCNAME} archive to STABLE"
     scp "${ARCNAME}.tar.gz" "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/stable/"
@@ -41,6 +42,7 @@ then
 elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+[[:alpha:]]+$ ]]
 then
     echo "### Make tag in SVN /tags/${ARCNAME}"
+    svn ci -m "${ARCNAME}"
     svn cp . "svn+ssh://orouits@svn.code.sf.net/p/qjackrcd/code/tags/${ARCNAME}" -m "${ARCNAME}"
     echo "### publish ${ARCNAME} archive to TESTING"
     scp "${ARCNAME}.tar.gz" "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/testing/"
