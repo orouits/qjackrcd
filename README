@@ -50,7 +50,7 @@ RELEASES
 --------
 
 SNAPSHOT (testing)
--
+- German translation from Michael Dahms
 
 1.0.5 (stable)
 - FIX:No translation when installed from source in /usr/local
