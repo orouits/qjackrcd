@@ -37,6 +37,7 @@ TRANSLATIONS += \
     qjackrcd_fr.ts \
     qjackrcd_it.ts \
     qjackrcd_cs.ts \
+    qjackrcd_de.ts \
 
 OTHER_FILES += \
     README \
