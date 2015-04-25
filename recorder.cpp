@@ -94,7 +94,7 @@ Recorder::Recorder(QString jackName)
     pauseActivationMax = 0;
     pauseActivationCount = pauseActivationMax + 1;
 
-    if ((jackClient = jack_client_open(jackName.toAscii(), jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
+    if ((jackClient = jack_client_open(jackName.toLatin1(), jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
         throw "Can't start or connect to jack server";
     }
 
@@ -150,7 +150,7 @@ int Recorder::jackSync(jack_transport_state_t state, jack_position_t *pos)
         setRecording(false);
     else if (state == JackTransportStarting)
         setRecording(true);
-    return TRUE;
+    return 1;
 }
 
 int Recorder::jackProcess(jack_nframes_t nframes)
@@ -209,7 +209,7 @@ void Recorder::jackShutdown()
 // Recorder internal methods
 //=============================================================================
 
-// The recorder thread run function, all recording algorithm is manged from here
+// The recorder thread run function, all recording algorithm is managed from here
 void Recorder::run()
 {
     int loopCounter = 0;
@@ -326,7 +326,7 @@ void Recorder::computeCurrentBufferLevels() {
 
 void Recorder::computeDiskSpace() {
     struct statfs stats;
-    statfs(dirPath.path().toAscii().constData(), &stats);
+    statfs(dirPath.path().toLatin1().constData(), &stats);
     diskSpace = 100 - (stats.f_bavail * 100) / stats.f_blocks;
 }
 
@@ -349,7 +349,7 @@ void Recorder::newFile() {
 
     computeFilePath();
 
-    sndFile = sf_open (currentFilePath.toAscii().constData(), SFM_WRITE, &sfinfo);
+    sndFile = sf_open (currentFilePath.toLatin1().constData(), SFM_WRITE, &sfinfo);
 }
 
 void Recorder::closeFile() {
@@ -434,7 +434,7 @@ QString Recorder::getJackConnections(jack_port_t* jackPort) {
 void Recorder::setJackConnections(QString cnxLine, jack_port_t* jackPort) {
     QStringList strList = cnxLine.split(';', QString::SkipEmptyParts);
     for (int i = 0; i < strList.count() ; i++) {
-        jack_connect(jackClient, strList.at(i).toAscii().constData(), jack_port_name(jackPort) );
+        jack_connect(jackClient, strList.at(i).toLatin1().constData(), jack_port_name(jackPort) );
     }
 }
 
@@ -445,9 +445,9 @@ void Recorder::checkJackAutoConnect() {
         if (jack_port_flags(port) & JackPortIsOutput) {
             QString portName = jack_port_name(port);
             if (jack_port_connected(jackInputPort1) == 0)
-                jack_connect(jackClient, portName.toAscii().constData(), jack_port_name(jackInputPort1) );
+                jack_connect(jackClient, portName.toLatin1().constData(), jack_port_name(jackInputPort1) );
             else if (jack_port_connected(jackInputPort2) == 0)
-                jack_connect(jackClient, portName.toAscii().constData(), jack_port_name(jackInputPort2) );
+                jack_connect(jackClient, portName.toLatin1().constData(), jack_port_name(jackInputPort2) );
         }
     }
 }

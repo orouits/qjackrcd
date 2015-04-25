@@ -75,5 +75,29 @@
         <source>Recording...</source>
         <translation>Nahrává se...</translation>
     </message>
+    <message>
+        <source>Misc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jack auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>listen connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jack trans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>enable transport</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

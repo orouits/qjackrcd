@@ -54,7 +54,6 @@ class Recorder: public QThread
     float *currentBuffer;
     float *alternateBuffer;
 
-    QDir dirPath;
     int diskSpace;
 
     QString currentFilePath;
@@ -74,6 +73,9 @@ class Recorder: public QThread
     int pauseActivationDelay;
     int pauseActivationCount;
     bool splitMode;
+    bool jackAutoMode;
+    bool jackTransMode;
+    QDir dirPath;
 
     float leftLevel;
     float rightLevel;
@@ -124,6 +126,12 @@ public:
     QString getJackConnections2() {return getJackConnections(jackInputPort2);}
     void setJackConnections1(QString cnxLine) {setJackConnections(cnxLine, jackInputPort1);}
     void setJackConnections2(QString cnxLine) {setJackConnections(cnxLine, jackInputPort2);}
+    void setJackAutoMode(bool val) { jackAutoMode = val; }
+    bool isJackAutoMode() { return jackAutoMode; }
+    void setJackTransMode(bool val) { jackTransMode = val; }
+    bool isJackTransMode() { return jackTransMode; }
+    void setDir(QDir dir) {dirPath = dir;}
+    QDir getDir() {return dirPath;}
 
     QString getJackName() {return jackName; }
     bool isShutdown() { return shutdown; }

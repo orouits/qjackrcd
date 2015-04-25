@@ -36,11 +36,11 @@
 * Made with QTCreator
 * It Depends on jack, sndfile and qt4 libraries.
 */
-
+#include "mainwindow.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
-#include "mainwindow.h"
+
 
 #define REC_JK_NAME "QJackRcd" ///< Name of the recorder instance used in jack client name
 

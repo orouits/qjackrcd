@@ -1,4 +1,6 @@
-<!DOCTYPE TS><TS>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.0">
 <context>
     <name>MainWindow</name>
     <message>
@@ -72,6 +74,30 @@
     <message>
         <source>Recording...</source>
         <translation>Aufnahme läuft...</translation>
+    </message>
+    <message>
+        <source>Misc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jack auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>listen connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jack trans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>enable transport</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

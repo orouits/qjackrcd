@@ -156,6 +156,9 @@ void MainWindow::writeSettings()
     settings.setValue("processCmdLine", recorder->getProcessCmdLine());
     settings.setValue("connections1", recorder->getJackConnections1());
     settings.setValue("connections2", recorder->getJackConnections2());
+    settings.setValue("jackAuto", recorder->isJackAutoMode());
+    settings.setValue("jackTrans", recorder->isJackTransMode());
+    settings.setValue("dir", recorder->getDir().absolutePath());
     settings.endGroup();
 }
 
@@ -170,5 +173,8 @@ void MainWindow::readSettings()
     recorder->setProcessCmdLine(settings.value("processCmdLine", "").toString());
     recorder->setJackConnections1(settings.value("connections1", "").toString());
     recorder->setJackConnections2(settings.value("connections2", "").toString());
+    recorder->setJackAutoMode(settings.value("jackAuto", true).toBool());
+    recorder->setJackTransMode(settings.value("jackTrans", false).toBool());
+    recorder->setDir(settings.value("dir", QDir::home().absolutePath()).toString());
     settings.endGroup();
 }

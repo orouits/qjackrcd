@@ -2,7 +2,6 @@
 # Project created by QtCreator 2010-04-12T22:34:09
 # -------------------------------------------------
 isEmpty(PREFIX):PREFIX = /usr/local
-isEmpty(QMAKE_LRELEASE):QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
 isEmpty(BINDIR):BINDIR = $$PREFIX/bin
 isEmpty(DATADIR):DATADIR = $$PREFIX/share
 
@@ -15,6 +14,8 @@ MOC_DIR = build
 RCC_DIR = build
 UI_DIR = build
 LOCALE_DIR = locale
+
+QT += core gui widgets
 
 SOURCES += main.cpp \
     mainwindow.cpp \
@@ -55,7 +56,7 @@ PRE_TARGETDEPS += prepare
 # custom translation compiler
 updateqm.input = TRANSLATIONS
 updateqm.output = $$LOCALE_DIR/${QMAKE_FILE_BASE}.qm
-updateqm.commands = $$QMAKE_LRELEASE ${QMAKE_FILE_IN} -qm $$LOCALE_DIR/${QMAKE_FILE_BASE}.qm
+updateqm.commands = lrelease ${QMAKE_FILE_IN} -qm $$LOCALE_DIR/${QMAKE_FILE_BASE}.qm
 updateqm.CONFIG += no_link target_predeps
 QMAKE_EXTRA_COMPILERS += updateqm
 

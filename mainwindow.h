@@ -29,7 +29,7 @@
 
 #include <QTimer>
 #include <QIcon>
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include "recorder.h"
 
 namespace Ui

@@ -27,8 +27,7 @@
 #ifndef QJRMETER_H
 #define QJRMETER_H
 
-#include <QtGui>
-#include <QtDesigner/QDesignerExportWidget>
+#include <QtWidgets>
 #include <math.h>
 
 #define QJRM_MAXLEVEL 3   ///< Max DB showable level by the vumeter
@@ -38,7 +37,7 @@
 * @class QJRMeter
 * @brief DB Meter widget for QJackRcd.
 */
-class QDESIGNER_WIDGET_EXPORT QJRMeter : public QWidget
+class QJRMeter : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QColor colorBack READ getColorBack WRITE setColorBack);
