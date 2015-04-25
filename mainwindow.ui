@@ -234,7 +234,7 @@
       </widget>
       <widget class="QWidget" name="tabMisc">
        <attribute name="title">
-        <string>Misc</string>
+        <string>Options</string>
        </attribute>
        <layout class="QFormLayout" name="formLayout">
         <item row="0" column="0">
