@@ -106,7 +106,6 @@ void MainWindow::on_pauseLevelSpin_valueChanged(double level)
     ui->vuMeter->setCompLevel(level);
 }
 
-// the timer slot show recorder state regularly
 void MainWindow::onRecorderStatusChanged()
 {
     if (recorder->isShutdown()) {
@@ -144,7 +143,7 @@ void MainWindow::onRecorderStatusChanged()
         }
         else if (!recorder->isRecordEnabled()) {
             ui->recButton->setEnabled(false);
-            ui->statusBar->showMessage(tr("Not ready"));
+            ui->statusBar->showMessage(tr("Disabled"));
         }
         else {
             ui->recButton->setEnabled(true);
@@ -193,7 +192,7 @@ void MainWindow::on_optJktransCheck_stateChanged(int value)
 
 void MainWindow::on_optOutputDirButton_clicked()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),ui->optOutputDirEdit->text(),QFileDialog::ShowDirsOnly);
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Choose a directory"),ui->optOutputDirEdit->text(),QFileDialog::ShowDirsOnly);
     if (!dir.isEmpty())
         ui->optOutputDirEdit->setText(dir);
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.1">
 <context>
     <name>MainWindow</name>
     <message>
@@ -76,10 +76,6 @@
         <translation>Aufnahme läuft...</translation>
     </message>
     <message>
-        <source>Misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Directory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -88,15 +84,39 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>listen connections</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Jack trans</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>enable transport</source>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OGG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MP3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid dir</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose a directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="en_US">
+<TS version="2.1" language="en_US">
 <context>
     <name>MainWindow</name>
     <message>
@@ -9,22 +9,32 @@
         <translation>QJackRcd</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="309"/>
+        <location filename="mainwindow.ui" line="252"/>
+        <source>Options</source>
+        <translation>Options</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="286"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="335"/>
         <source>Record</source>
         <translation>Record</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="338"/>
+        <location filename="mainwindow.ui" line="364"/>
         <source>File</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="351"/>
+        <location filename="mainwindow.ui" line="377"/>
         <source>Disk</source>
         <translation>Disk</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="373"/>
+        <location filename="mainwindow.ui" line="399"/>
         <source>%p%</source>
         <translation>%p%</translation>
     </message>
@@ -60,69 +70,84 @@
     </message>
     <message>
         <location filename="mainwindow.ui" line="185"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="190"/>
+        <source>OGG</source>
+        <translation>OGG</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="195"/>
+        <source>MP3</source>
+        <translation>MP3</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="200"/>
         <source>Custom</source>
         <translation>Custom</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="193"/>
+        <location filename="mainwindow.ui" line="208"/>
         <source>Command</source>
         <translation>Command</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="213"/>
+        <location filename="mainwindow.ui" line="228"/>
         <source>Last file</source>
         <translation>Last file</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="237"/>
-        <source>Misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="243"/>
+        <location filename="mainwindow.ui" line="272"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Directory</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="253"/>
+        <location filename="mainwindow.ui" line="265"/>
         <source>Jack auto</source>
-        <translation type="unfinished"></translation>
+        <translation>Jack auto</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="260"/>
-        <source>listen connections</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="267"/>
+        <location filename="mainwindow.ui" line="279"/>
         <source>Jack trans</source>
-        <translation type="unfinished"></translation>
+        <translation>Jack trans</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="274"/>
-        <source>enable transport</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="401"/>
+        <location filename="mainwindow.ui" line="427"/>
         <source>Exit</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="58"/>
-        <location filename="mainwindow.cpp" line="118"/>
+        <location filename="mainwindow.cpp" line="62"/>
+        <location filename="mainwindow.cpp" line="151"/>
         <source>Ready</source>
         <translation>Ready</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="109"/>
+        <location filename="mainwindow.cpp" line="124"/>
+        <source>Invalid dir</source>
+        <translation>Invalid dir</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="137"/>
         <source>Waiting for sound...</source>
         <translation>Waiting for sound...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="113"/>
+        <location filename="mainwindow.cpp" line="141"/>
         <source>Recording...</source>
         <translation>Recording...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="146"/>
+        <source>Disabled</source>
+        <translation>Disabled</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="195"/>
+        <source>Choose a directory</source>
+        <translation>Choose a directory</translation>
     </message>
 </context>
 </TS>
