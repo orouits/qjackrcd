@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <memory.h>
-#include <sys/statfs.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
@@ -37,6 +36,7 @@
 #include <QProcess>
 #include <QFileInfo>
 #include <QDateTime>
+#include <QStorageInfo>
 
 //=============================================================================
 // Internal defines
@@ -86,7 +86,7 @@ Recorder::Recorder(QString jackName)
 {
     this->jackName = jackName;
     sndFile = NULL;
-    dirPath = QDir::home();
+    outputDir = QDir::home();
     currentFilePath = "";
     processFilePath = "";
     processCmdLine = "";
@@ -324,14 +324,20 @@ void Recorder::computeCurrentBufferLevels() {
     rightLevel = db_r < - 40 ? - 40 : db_r;
 }
 
+bool Recorder::isRecordEnabled() {
+    return QFileInfo(outputDir.absolutePath()).isWritable();
+}
+
 void Recorder::computeDiskSpace() {
-    struct statfs stats;
-    statfs(dirPath.path().toLatin1().constData(), &stats);
-    diskSpace = 100 - (stats.f_bavail * 100) / stats.f_blocks;
+    QStorageInfo info(outputDir);
+    if (info.isValid())
+        diskSpace = 100 - (info.bytesAvailable() * 100) / info.bytesTotal();
+    else
+        diskSpace = -1;
 }
 
 void Recorder::computeFilePath() {
-    currentFilePath = dirPath.absoluteFilePath(
+    currentFilePath = outputDir.absoluteFilePath(
                 jackName.toLower()
                 + "-" + QDateTime::currentDateTime().toString("yyyy-MM-ddThh-mm-ss")
                 + ".wav" );
@@ -349,7 +355,7 @@ void Recorder::newFile() {
 
     computeFilePath();
 
-    sndFile = sf_open (currentFilePath.toLatin1().constData(), SFM_WRITE, &sfinfo);
+    sndFile = sf_open (currentFilePath.toLocal8Bit().constData(), SFM_WRITE, &sfinfo);
 }
 
 void Recorder::closeFile() {
@@ -434,7 +440,7 @@ QString Recorder::getJackConnections(jack_port_t* jackPort) {
 void Recorder::setJackConnections(QString cnxLine, jack_port_t* jackPort) {
     QStringList strList = cnxLine.split(';', QString::SkipEmptyParts);
     for (int i = 0; i < strList.count() ; i++) {
-        jack_connect(jackClient, strList.at(i).toLatin1().constData(), jack_port_name(jackPort) );
+        jack_connect(jackClient, strList.at(i).toLocal8Bit().constData(), jack_port_name(jackPort) );
     }
 }
 

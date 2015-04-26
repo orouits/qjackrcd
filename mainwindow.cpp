@@ -28,6 +28,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#define POSTCMD_NONE_ITEM 0
+#define POSTCMD_OGG_ITEM 1
+#define POSTCMD_MP3_ITEM 2
+#define POSTCMD_CUSTOM_ITEM 3
+
 //=============================================================================
 // Constructor / destructor
 //=============================================================================
@@ -44,18 +49,30 @@ MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
     ui->setupUi(this);
 
     ui->vuMeter->setColorBack(palette().window().color());
-
-    ui->postActionCombo->addItem("OGG","sox ${0} ${0%%wav}ogg");
-    ui->postActionCombo->addItem("MP3","sox ${0} ${0%%wav}mp3");
+    ui->postActionCombo->setItemData(POSTCMD_NONE_ITEM,"");
+    ui->postActionCombo->setItemData(POSTCMD_OGG_ITEM,"sox ${0} ${0%%wav}ogg");
+    ui->postActionCombo->setItemData(POSTCMD_MP3_ITEM,"sox ${0} ${0%%wav}mp3");
 
     readSettings();
 
     ui->pauseLevelSpin->setValue(recorder->getPauseLevel());
     ui->pauseDelaySpin->setValue(recorder->getPauseActivationDelay());
     ui->pauseSplitCheck->setChecked(recorder->isSplitMode());
-    ui->vuMeter->setCompLevel(recorder->getPauseLevel());
-    ui->postCmdEdit->setText(recorder->getProcessCmdLine());
+    ui->vuMeter->setCompLevel(recorder->getPauseLevel()); 
     ui->statusBar->showMessage(tr("Ready"));
+    ui->postCmdEdit->setText(recorder->getProcessCmdLine());
+
+    int postItem = ui->postActionCombo->findData(recorder->getProcessCmdLine());
+    if (postItem >= 0)
+        ui->postActionCombo->setCurrentIndex(postItem);
+    else {
+        ui->postActionCombo->setItemData(POSTCMD_CUSTOM_ITEM, recorder->getProcessCmdLine());
+        ui->postActionCombo->setCurrentIndex(POSTCMD_CUSTOM_ITEM);
+    }
+
+    ui->optOutputDirEdit->setText(recorder->getOutputDir().absolutePath());
+    ui->optJkAutoCheck->setChecked(recorder->isJackAutoMode());
+    ui->optJktransCheck->setChecked(recorder->isJackTransMode());
 
     connect(recorder, SIGNAL(statusChanged()), this, SLOT(onRecorderStatusChanged()));
 }
@@ -98,12 +115,24 @@ void MainWindow::onRecorderStatusChanged()
     else {
         ui->vuMeter->setLeftLevel(recorder->getLeftLevel());
         ui->vuMeter->setRightLevel(recorder->getRightLevel());
-        ui->recDiskProgress->setValue(recorder->getDiskSpace());
+
+        if (recorder->getDiskSpace() >= 0) {
+            ui->recDiskProgress->setValue(recorder->getDiskSpace());
+            ui->recDiskProgress->setFormat("%p%");
+        }
+        else {
+            ui->recDiskProgress->setValue(100);
+            ui->recDiskProgress->setFormat(tr("Invalid dir"));
+        }
+
         if (ui->recFileEdit->text() != recorder->getCurrentFilePath())
             ui->recFileEdit->setText(recorder->getCurrentFilePath());
+
         if (ui->postLastEdit->text() != recorder->getProcessFilePath())
             ui->postLastEdit->setText(recorder->getProcessFilePath());
+
         if (recorder->isRecording()) {
+            ui->recButton->setEnabled(true);
             if (recorder->isPaused()) {
                 ui->recButton->setIcon(*iconOrange);
                 ui->statusBar->showMessage(tr("Waiting for sound..."));
@@ -113,7 +142,12 @@ void MainWindow::onRecorderStatusChanged()
                 ui->statusBar->showMessage(tr("Recording..."));
             }
         }
+        else if (!recorder->isRecordEnabled()) {
+            ui->recButton->setEnabled(false);
+            ui->statusBar->showMessage(tr("Not ready"));
+        }
         else {
+            ui->recButton->setEnabled(true);
             ui->recButton->setIcon(*iconGreen);
             ui->statusBar->showMessage(tr("Ready"));
         }
@@ -130,9 +164,38 @@ void MainWindow::on_postActionCombo_currentIndexChanged(int index)
     ui->postCmdEdit->setText(ui->postActionCombo->itemData(index).toString());
 }
 
-void MainWindow::on_postCmdEdit_textChanged(QString text)
+void MainWindow::on_postCmdEdit_textChanged(const QString &text)
 {
     recorder->setProcessCmdLine(text);
+    int postItem = ui->postActionCombo->findData(recorder->getProcessCmdLine());
+    if (postItem >= 0)
+        ui->postActionCombo->setCurrentIndex(postItem);
+    else {
+        ui->postActionCombo->setItemData(POSTCMD_CUSTOM_ITEM, recorder->getProcessCmdLine());
+        ui->postActionCombo->setCurrentIndex(POSTCMD_CUSTOM_ITEM);
+    }
+}
+
+void MainWindow::on_optOutputDirEdit_textChanged(const QString &text)
+{
+    recorder->setOutputDir(QDir(text));
+}
+
+void MainWindow::on_optJkAutoCheck_stateChanged(int value)
+{
+    recorder->setJackAutoMode(value != 0);
+}
+
+void MainWindow::on_optJktransCheck_stateChanged(int value)
+{
+    recorder->setJackTransMode(value != 0);
+}
+
+void MainWindow::on_optOutputDirButton_clicked()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),ui->optOutputDirEdit->text(),QFileDialog::ShowDirsOnly);
+    if (!dir.isEmpty())
+        ui->optOutputDirEdit->setText(dir);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -158,7 +221,8 @@ void MainWindow::writeSettings()
     settings.setValue("connections2", recorder->getJackConnections2());
     settings.setValue("jackAuto", recorder->isJackAutoMode());
     settings.setValue("jackTrans", recorder->isJackTransMode());
-    settings.setValue("dir", recorder->getDir().absolutePath());
+    settings.setValue("outputDir", recorder->getOutputDir().absolutePath());
+
     settings.endGroup();
 }
 
@@ -174,7 +238,10 @@ void MainWindow::readSettings()
     recorder->setJackConnections1(settings.value("connections1", "").toString());
     recorder->setJackConnections2(settings.value("connections2", "").toString());
     recorder->setJackAutoMode(settings.value("jackAuto", true).toBool());
-    recorder->setJackTransMode(settings.value("jackTrans", false).toBool());
-    recorder->setDir(settings.value("dir", QDir::home().absolutePath()).toString());
+    recorder->setJackTransMode(settings.value("jackTrans", true).toBool());
+    recorder->setOutputDir(settings.value("outputDir", QDir::home().absolutePath()).toString());
+
     settings.endGroup();
 }
+
+

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>268</width>
-    <height>269</height>
+    <width>312</width>
+    <height>289</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -51,7 +51,7 @@
        <bool>false</bool>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabPause">
        <attribute name="title">
@@ -182,6 +182,21 @@
           </property>
           <item>
            <property name="text">
+            <string>None</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>OGG</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>MP3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>Custom</string>
            </property>
           </item>
@@ -232,46 +247,57 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabMisc">
+      <widget class="QWidget" name="tabOpt">
        <attribute name="title">
         <string>Options</string>
        </attribute>
-       <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="miscDirLabel">
-          <property name="text">
-           <string>Directory</string>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="optOutputDirEdit">
+          <property name="readOnly">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="miscDirEdit"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="miscJkAutoLabel">
+        <item row="2" column="0">
+         <widget class="QLabel" name="optJkAutoLabel">
           <property name="text">
            <string>Jack auto</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="miscJkAutoCheck">
+        <item row="0" column="0">
+         <widget class="QLabel" name="optOutputDirLabel">
           <property name="text">
-           <string>listen connections</string>
+           <string>Directory</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="miscJktransLabel">
+        <item row="3" column="0">
+         <widget class="QLabel" name="optJktransLabel">
           <property name="text">
            <string>Jack trans</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QCheckBox" name="miscJktransCheck">
+        <item row="0" column="2">
+         <widget class="QToolButton" name="optOutputDirButton">
           <property name="text">
-           <string>enable transport</string>
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" colspan="2">
+         <widget class="QCheckBox" name="optJkAutoCheck">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" colspan="2">
+         <widget class="QCheckBox" name="optJktransCheck">
+          <property name="text">
+           <string/>
           </property>
          </widget>
         </item>

@@ -61,14 +61,18 @@ private:
 
 
 private slots:
-    void on_pauseLevelSpin_valueChanged(double );
-    void on_pauseDelaySpin_valueChanged(double );
+    void on_pauseLevelSpin_valueChanged(double value);
+    void on_pauseDelaySpin_valueChanged(double value);
     void on_recButton_clicked();
-    void on_pauseSplitCheck_stateChanged(int );
+    void on_pauseSplitCheck_stateChanged(int value);
     void on_postActionCombo_currentIndexChanged(int index);
-    void on_postCmdEdit_textChanged(QString );
+    void on_postCmdEdit_textChanged(const QString &text);
 
     void onRecorderStatusChanged();
+    void on_optJkAutoCheck_stateChanged(int value);
+    void on_optJktransCheck_stateChanged(int value);
+    void on_optOutputDirEdit_textChanged(const QString &text);
+    void on_optOutputDirButton_clicked();
 };
 
 #endif // MAINWINDOW_H

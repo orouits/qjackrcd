@@ -75,7 +75,7 @@ class Recorder: public QThread
     bool splitMode;
     bool jackAutoMode;
     bool jackTransMode;
-    QDir dirPath;
+    QDir outputDir;
 
     float leftLevel;
     float rightLevel;
@@ -130,11 +130,12 @@ public:
     bool isJackAutoMode() { return jackAutoMode; }
     void setJackTransMode(bool val) { jackTransMode = val; }
     bool isJackTransMode() { return jackTransMode; }
-    void setDir(QDir dir) {dirPath = dir;}
-    QDir getDir() {return dirPath;}
+    void setOutputDir(QDir dir) {outputDir = dir;}
+    QDir getOutputDir() {return outputDir;}
 
     QString getJackName() {return jackName; }
     bool isShutdown() { return shutdown; }
+    bool isRecordEnabled();
     void setRecording(bool value) { recording = value; }
     bool isRecording() { return recording; }
     bool isPaused() { return pauseActivationCount > pauseActivationMax; }
