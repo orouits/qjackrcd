@@ -5,7 +5,7 @@ isEmpty(PREFIX):PREFIX = /usr/local
 isEmpty(BINDIR):BINDIR = $$PREFIX/bin
 isEmpty(DATADIR):DATADIR = $$PREFIX/share
 
-VERSION = 1.0.4
+VERSION = 1.1.0
 TARGET = qjackrcd
 TEMPLATE = app
 
