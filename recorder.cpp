@@ -93,6 +93,8 @@ Recorder::Recorder(QString jackName)
     overruns = 0;
     pauseActivationMax = 0;
     pauseActivationCount = pauseActivationMax + 1;
+    jackTransMode = true;
+    jackAutoMode = true;
 
     if ((jackClient = jack_client_open(jackName.toLatin1(), jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
         throw "Can't start or connect to jack server";
@@ -146,11 +148,13 @@ Recorder::~Recorder()
 
 int Recorder::jackSync(jack_transport_state_t state, jack_position_t *pos)
 {
-    if (state == JackTransportStopped)
-        setRecording(false);
-    else if (state == JackTransportStarting)
-        setRecording(true);
-    return 1;
+    if (isJackTransMode()) {
+        if (state == JackTransportStopped)
+            setRecording(false);
+        else if (state == JackTransportStarting)
+            setRecording(true);
+    }
+    return isRecordEnabled();
 }
 
 int Recorder::jackProcess(jack_nframes_t nframes)
@@ -189,7 +193,7 @@ int Recorder::jackProcess(jack_nframes_t nframes)
 }
 
 void Recorder::jackPortReg(jack_port_id_t port_id, int reg) {
-    if (reg) {
+    if (isJackAutoMode() && reg) {
         // if a port is registerred, its ID is put in queue for processing by the recorder thread
         jackPortRegQueue.enqueue(port_id);
     }
@@ -300,6 +304,8 @@ void Recorder::run()
 
     // stop jack incomming sound
     jack_deactivate(jackClient);
+
+    dataReadyMutex.unlock();
 }
 
 void Recorder::computePauseActivationMax() {

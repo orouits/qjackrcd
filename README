@@ -52,6 +52,11 @@ RELEASES
 SNAPSHOT (testing)
 -
 
+1.1.0 (stable)
+- QT5 upgrade
+- Output directory choice
+- Jack options
+
 1.0.6 (stable)
 - German translation from Michael Dahms
 
