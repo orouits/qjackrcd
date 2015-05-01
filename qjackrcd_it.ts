@@ -14,27 +14,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="286"/>
-        <source>...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="335"/>
+        <location filename="mainwindow.ui" line="314"/>
         <source>Record</source>
         <translation>Registra</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="364"/>
+        <location filename="mainwindow.ui" line="343"/>
         <source>File</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="377"/>
+        <location filename="mainwindow.ui" line="356"/>
         <source>Disk</source>
         <translation>Disco</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="399"/>
+        <location filename="mainwindow.ui" line="378"/>
         <source>%p%</source>
         <translation>%p%</translation>
     </message>
@@ -76,12 +71,12 @@
     <message>
         <location filename="mainwindow.ui" line="190"/>
         <source>OGG</source>
-        <translation type="unfinished"></translation>
+        <translation>OGG</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="195"/>
         <source>MP3</source>
-        <translation type="unfinished"></translation>
+        <translation>MP3</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="200"/>
@@ -99,22 +94,22 @@
         <translation>Ultimo file</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="272"/>
+        <location filename="mainwindow.ui" line="265"/>
         <source>Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="265"/>
-        <source>Jack auto</source>
+        <location filename="mainwindow.ui" line="272"/>
+        <source>Enable jack auto connect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="279"/>
-        <source>Jack trans</source>
+        <source>Enable jack transport</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="427"/>
+        <location filename="mainwindow.ui" line="406"/>
         <source>Exit</source>
         <translation>Esci</translation>
     </message>

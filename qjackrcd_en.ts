@@ -14,27 +14,22 @@
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="286"/>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="335"/>
+        <location filename="mainwindow.ui" line="314"/>
         <source>Record</source>
         <translation>Record</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="364"/>
+        <location filename="mainwindow.ui" line="343"/>
         <source>File</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="377"/>
+        <location filename="mainwindow.ui" line="356"/>
         <source>Disk</source>
         <translation>Disk</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="399"/>
+        <location filename="mainwindow.ui" line="378"/>
         <source>%p%</source>
         <translation>%p%</translation>
     </message>
@@ -71,7 +66,7 @@
     <message>
         <location filename="mainwindow.ui" line="185"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="190"/>
@@ -99,22 +94,22 @@
         <translation>Last file</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="272"/>
+        <location filename="mainwindow.ui" line="265"/>
         <source>Directory</source>
         <translation>Directory</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="265"/>
-        <source>Jack auto</source>
-        <translation>Jack auto</translation>
+        <location filename="mainwindow.ui" line="272"/>
+        <source>Enable jack auto connect</source>
+        <translation>Enable jack auto connect</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="279"/>
-        <source>Jack trans</source>
-        <translation>Jack trans</translation>
+        <source>Enable jack transport</source>
+        <translation>Enable jack transport</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="427"/>
+        <location filename="mainwindow.ui" line="406"/>
         <source>Exit</source>
         <translation>Exit</translation>
     </message>

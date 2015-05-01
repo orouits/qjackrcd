@@ -80,31 +80,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Jack auto</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Jack trans</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>OGG</source>
-        <translation type="unfinished"></translation>
+        <translation>OGG</translation>
     </message>
     <message>
         <source>MP3</source>
-        <translation type="unfinished"></translation>
+        <translation>MP3</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -117,6 +105,14 @@
     </message>
     <message>
         <source>Choose a directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable jack auto connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable jack transport</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

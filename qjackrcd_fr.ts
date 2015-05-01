@@ -14,27 +14,22 @@
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="286"/>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="335"/>
+        <location filename="mainwindow.ui" line="314"/>
         <source>Record</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="364"/>
+        <location filename="mainwindow.ui" line="343"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="377"/>
+        <location filename="mainwindow.ui" line="356"/>
         <source>Disk</source>
         <translation>Disque</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="399"/>
+        <location filename="mainwindow.ui" line="378"/>
         <source>%p%</source>
         <translation>%p%</translation>
     </message>
@@ -99,22 +94,22 @@
         <translation>Fichier traité</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="272"/>
+        <location filename="mainwindow.ui" line="265"/>
         <source>Directory</source>
         <translation>Répertoire</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="265"/>
-        <source>Jack auto</source>
-        <translation>Jack auto</translation>
+        <location filename="mainwindow.ui" line="272"/>
+        <source>Enable jack auto connect</source>
+        <translation>Connexion jack auto</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="279"/>
-        <source>Jack trans</source>
-        <translation>Jack trans</translation>
+        <source>Enable jack transport</source>
+        <translation>Transport jack actif</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="427"/>
+        <location filename="mainwindow.ui" line="406"/>
         <source>Exit</source>
         <translation>Quitter</translation>
     </message>
