@@ -32,11 +32,16 @@
 #include <pwd.h>
 #include "recorder.h"
 
+#include <QtGlobal>
 #include <QWaitCondition>
 #include <QProcess>
 #include <QFileInfo>
 #include <QDateTime>
-#include <QStorageInfo>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
+    #include <QStorageInfo>
+#else
+    #include <sys/statfs.h>
+#endif
 
 //=============================================================================
 // Internal defines
@@ -335,11 +340,15 @@ bool Recorder::isRecordEnabled() {
 }
 
 void Recorder::computeDiskSpace() {
+#ifdef QSTORAGEINFO_H
     QStorageInfo info(outputDir);
-    if (info.isValid())
-        diskSpace = 100 - (info.bytesAvailable() * 100) / info.bytesTotal();
-    else
-        diskSpace = -1;
+    diskSpace = info.isValid() ? 100 - (info.bytesAvailable() * 100) / info.bytesTotal() : -1;
+#else
+    #warning "No QStorageInfo class defined, using old statfs method to compute disk size."
+    struct statfs stats;
+    statfs(outputDir.path().toLatin1(), &stats);
+    diskSpace = 100 - (stats.f_bavail * 100) / stats.f_blocks;
+#endif
 }
 
 void Recorder::computeFilePath() {
