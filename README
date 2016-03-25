@@ -14,7 +14,7 @@ Silence event can be used to pause the record or to split files by closing the c
 Optionaly QJackRcd is enable to post-process each file record at closure in background mode.
 The command is a simple bash command.
 
-Made with QTCreator, it Depends on jack, sndfile and qt4 libraries.
+Made with QTCreator, it Depends on jack, sndfile and qt5 libraries.
 
 AUTHOR
 ------
