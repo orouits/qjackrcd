@@ -81,7 +81,7 @@
     <message>
         <location filename="mainwindow.ui" line="200"/>
         <source>Custom</source>
-        <translation>Spécifique</translation>
+        <translation>Personnalisé</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="208"/>
