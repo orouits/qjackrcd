@@ -24,6 +24,7 @@ Olivier ROUITS <olivier.rouits@free.fr>
 COMPILE
 -------
 
+qmake -config release
 make clean
 make
 
@@ -50,7 +51,10 @@ RELEASES
 --------
 
 SNAPSHOT (testing)
--
+
+1.1.1 (stable)
+- QT5 5.3 back compatibility for debian Jessie
+- FR translation fixes from trebmuh@tuxfamily.org
 
 1.1.0 (stable)
 - QT5 upgrade
