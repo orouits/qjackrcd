@@ -76,5 +76,6 @@ int main(int argc, char *argv[])
 
     // Go !
     window.show();
+
     return application.exec();
 }

@@ -73,6 +73,7 @@ private slots:
     void on_optJktransCheck_stateChanged(int value);
     void on_optOutputDirEdit_textChanged(const QString &text);
     void on_optOutputDirButton_clicked();
+    void on_optRecordAtLaunchCheck_stateChanged(int arg1);
 };
 
 #endif // MAINWINDOW_H

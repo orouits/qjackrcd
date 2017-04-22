@@ -129,9 +129,6 @@ Recorder::Recorder(QString jackName)
     setSplitMode(false);
     setPauseActivationDelay(3);
     setPauseLevel(-20);
-
-    // start the recorder thread
-    start();
 }
 
 Recorder::~Recorder()
@@ -231,6 +228,9 @@ void Recorder::run()
 
     // to start always in pause mode if under pause level.
     pauseActivationCount = pauseActivationMax + 1;
+
+    // record at lanch feature
+    setRecording(isRecordAtLaunch());
 
     // initial signal for listeners
     emit statusChanged();

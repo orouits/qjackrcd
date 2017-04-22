@@ -73,8 +73,11 @@ MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
     ui->optOutputDirEdit->setText(recorder->getOutputDir().absolutePath());
     ui->optJkAutoCheck->setChecked(recorder->isJackAutoMode());
     ui->optJktransCheck->setChecked(recorder->isJackTransMode());
+    ui->optRecordAtLaunchCheck->setChecked(recorder->isRecordAtLaunch());
 
     connect(recorder, SIGNAL(statusChanged()), this, SLOT(onRecorderStatusChanged()));
+
+    recorder->start();
 }
 
 MainWindow::~MainWindow()
@@ -190,6 +193,11 @@ void MainWindow::on_optJktransCheck_stateChanged(int value)
     recorder->setJackTransMode(value != 0);
 }
 
+void MainWindow::on_optRecordAtLaunchCheck_stateChanged(int value)
+{
+    recorder->setRecordAtLaunch(value != 0);
+}
+
 void MainWindow::on_optOutputDirButton_clicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Choose a directory"),ui->optOutputDirEdit->text(),QFileDialog::ShowDirsOnly);
@@ -221,6 +229,7 @@ void MainWindow::writeSettings()
     settings.setValue("jackAuto", recorder->isJackAutoMode());
     settings.setValue("jackTrans", recorder->isJackTransMode());
     settings.setValue("outputDir", recorder->getOutputDir().absolutePath());
+    settings.setValue("recordAtLaunch", recorder->isRecordAtLaunch());
 
     settings.endGroup();
 }
@@ -239,8 +248,8 @@ void MainWindow::readSettings()
     recorder->setJackAutoMode(settings.value("jackAuto", true).toBool());
     recorder->setJackTransMode(settings.value("jackTrans", true).toBool());
     recorder->setOutputDir(settings.value("outputDir", QDir::home().absolutePath()).toString());
+    recorder->setRecordAtLaunch(settings.value("recordAtLaunch", false).toBool());
 
     settings.endGroup();
 }
-
 

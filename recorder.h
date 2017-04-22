@@ -73,6 +73,7 @@ class Recorder: public QThread
     int pauseActivationDelay;
     int pauseActivationCount;
     bool splitMode;
+    bool recordAtLaunch;
     bool jackAutoMode;
     bool jackTransMode;
     QDir outputDir;
@@ -143,6 +144,8 @@ public:
     int getPauseActivationDelay() {return pauseActivationDelay;}
     void setSplitMode(bool split) { splitMode = split; }
     bool isSplitMode() { return splitMode; }
+    void setRecordAtLaunch(bool value) { recordAtLaunch = value; }
+    bool isRecordAtLaunch() { return recordAtLaunch; }
     QString getCurrentFilePath() { return currentFilePath; }
     QString getProcessFilePath() { return processFilePath; }
     void setProcessCmdLine(QString cmdLine) { processCmdLine = cmdLine; }

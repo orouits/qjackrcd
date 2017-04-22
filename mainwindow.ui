@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
-    <height>269</height>
+    <width>292</width>
+    <height>281</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -277,6 +277,13 @@
          <widget class="QCheckBox" name="optJktransCheck">
           <property name="text">
            <string>Enable jack transport</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QCheckBox" name="optRecordAtLaunchCheck">
+          <property name="text">
+           <string>Record at launch</string>
           </property>
          </widget>
         </item>
