@@ -52,6 +52,9 @@ RELEASES
 
 SNAPSHOT (testing)
 
+1.1.2 (stable)
+- Add an option to be in record state at launch time
+
 1.1.1 (stable)
 - QT5 5.3 back compatibility for debian Jessie
 - FR translation fixes from trebmuh@tuxfamily.org
