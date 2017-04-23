@@ -129,6 +129,9 @@ Recorder::Recorder(QString jackName)
     setSplitMode(false);
     setPauseActivationDelay(3);
     setPauseLevel(-20);
+
+    // start jack client
+    jack_activate(jackClient);
 }
 
 Recorder::~Recorder()
@@ -136,6 +139,9 @@ Recorder::~Recorder()
     setShutdown(true);
     // wait for recorder thread shutdown
     wait(RCD_WAIT_TIMEOUT_MS);
+
+    // stop jack client
+    jack_deactivate(jackClient);
 
     // free / close objects
     if (currentBuffer) delete currentBuffer;
@@ -220,9 +226,6 @@ void Recorder::run()
 {
     int loopCounter = 0;
 
-    // start jack incomming sound
-    jack_activate(jackClient);
-
     // this computed attribute must be initialized before entering the main loop
     computePauseActivationMax();
 
@@ -306,9 +309,6 @@ void Recorder::run()
 
     // to be shure that file is closed
     closeFile();
-
-    // stop jack incomming sound
-    jack_deactivate(jackClient);
 
     dataReadyMutex.unlock();
 }
