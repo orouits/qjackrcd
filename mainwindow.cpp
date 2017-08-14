@@ -53,8 +53,6 @@ MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
     ui->postActionCombo->setItemData(POSTCMD_OGG_ITEM,"sox ${0} ${0%%wav}ogg");
     ui->postActionCombo->setItemData(POSTCMD_MP3_ITEM,"sox ${0} ${0%%wav}mp3");
 
-    readSettings();
-
     ui->pauseLevelSpin->setValue(recorder->getPauseLevel());
     ui->pauseDelaySpin->setValue(recorder->getPauseActivationDelay());
     ui->pauseSplitCheck->setChecked(recorder->isSplitMode());
@@ -76,8 +74,6 @@ MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
     ui->optRecordAtLaunchCheck->setChecked(recorder->isRecordAtLaunch());
 
     connect(recorder, SIGNAL(statusChanged()), this, SLOT(onRecorderStatusChanged()));
-
-    recorder->start();
 }
 
 MainWindow::~MainWindow()
@@ -207,49 +203,7 @@ void MainWindow::on_optOutputDirButton_clicked()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    writeSettings();
     event->accept();
 }
 
-//=============================================================================
-// Settings methods
-//=============================================================================
-
-void MainWindow::writeSettings()
-{
-    QSettings settings("qjackrcd", "qjackrcd");
-
-    settings.beginGroup("Recorder");
-    settings.setValue("pauseLevel", recorder->getPauseLevel());
-    settings.setValue("pauseActivationDelay", recorder->getPauseActivationDelay());
-    settings.setValue("splitMode", recorder->isSplitMode());
-    settings.setValue("processCmdLine", recorder->getProcessCmdLine());
-    settings.setValue("connections1", recorder->getJackConnections1());
-    settings.setValue("connections2", recorder->getJackConnections2());
-    settings.setValue("jackAuto", recorder->isJackAutoMode());
-    settings.setValue("jackTrans", recorder->isJackTransMode());
-    settings.setValue("outputDir", recorder->getOutputDir().absolutePath());
-    settings.setValue("recordAtLaunch", recorder->isRecordAtLaunch());
-
-    settings.endGroup();
-}
-
-void MainWindow::readSettings()
-{
-    QSettings settings("qjackrcd", "qjackrcd");
-
-    settings.beginGroup("Recorder");
-    recorder->setPauseLevel(settings.value("pauseLevel", -20).toFloat());
-    recorder->setPauseActivationDelay(settings.value("pauseActivationDelay", 3).toInt());
-    recorder->setSplitMode(settings.value("splitMode", false).toBool());
-    recorder->setProcessCmdLine(settings.value("processCmdLine", "").toString());
-    recorder->setJackConnections1(settings.value("connections1", "").toString());
-    recorder->setJackConnections2(settings.value("connections2", "").toString());
-    recorder->setJackAutoMode(settings.value("jackAuto", true).toBool());
-    recorder->setJackTransMode(settings.value("jackTrans", true).toBool());
-    recorder->setOutputDir(settings.value("outputDir", QDir::home().absolutePath()).toString());
-    recorder->setRecordAtLaunch(settings.value("recordAtLaunch", false).toBool());
-
-    settings.endGroup();
-}
 

@@ -68,10 +68,13 @@ desktop.path = $$DATADIR/applications
 desktop.files = qjackrcd.desktop
 icon.path = $$DATADIR/pixmaps
 icon.files = qjackrcd.png
+manpage.path = $$DATADIR/man/man1
+manpage.files = qjackrcd.1.gz
 INSTALLS += target \
             translations \
             desktop \
-            icon
+            icon \
+            manpage
 
 # custom docs target
 docs.target = docs
@@ -79,3 +82,10 @@ docs.commands = doxygen Doxyfile
 docs.depends = Doxyfile $$SOURCES $$HEADERS
 QMAKE_EXTRA_TARGETS += docs
 QMAKE_CLEAN += -r $$docs.target
+
+# man pages
+man.target = qjackrcd.1.gz
+man.depends = manpage.sgml
+man.commands = docbook-to-man $$man.depends | gzip > $$man.target
+QMAKE_EXTRA_TARGETS += man
+QMAKE_CLEAN += $$man.target

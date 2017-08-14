@@ -49,8 +49,6 @@ public:
     MainWindow(Recorder *recorder, QWidget *parent = 0);
     ~MainWindow();
     void closeEvent(QCloseEvent *event);
-    void readSettings();
-    void writeSettings();
 
 private:
     Ui::MainWindow *ui;
