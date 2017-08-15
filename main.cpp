@@ -47,15 +47,6 @@
 #define RCD_APP_VERSION "1.1" // Version of recorder application
 #define RCD_JK_NAME "QJackRcd" // Name of the recorder instance used in jack client name
 
-/**
- * @fn int main (int argc, char *argv[])
- * @brief Program entry.
- *
- * Main doesn't take any special paramerter, only standard QT parameters.
- *
- * @return 0 if normal GUI quit.
- */
-
 //=============================================================================
 // Settings methods
 //=============================================================================
@@ -111,6 +102,14 @@ void writeSettings(Recorder &recorder, QSettings &settings, QCommandLineParser &
 // Main
 //=============================================================================
 
+/**
+ * @fn int main (int argc, char *argv[])
+ * @brief Program entry.
+ *
+ * Main doesn't take any special paramerter, only standard QT parameters.
+ *
+ * @return 0 if normal GUI quit.
+ */
 int main(int argc, char *argv[])
 {
     int exitcode = 0;
