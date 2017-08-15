@@ -72,14 +72,21 @@ void readSettings(Recorder &recorder, QSettings &settings, QCommandLineParser &p
         recorder.setJackConnections2(settings.value("connections2", "").toString());
         recorder.setJackAutoMode(settings.value("jackAuto", true).toBool());
         recorder.setJackTransMode(settings.value("jackTrans", true).toBool());
-        recorder.setOutputDir(settings.value("outputDir", QDir::home().absolutePath()).toString());
+        recorder.setOutputDir(QDir(settings.value("outputDir", QDir::home().absolutePath()).toString()));
         recorder.setRecordAtLaunch(settings.value("recordAtLaunch", false).toBool());
         settings.endGroup();
     }
 
-    if (parser.isSet("l")) recorder.setPauseLevel(parser.value("pauseLevel").toInt());
-    if (parser.isSet("d")) recorder.setPauseActivationDelay(parser.value("pauseDelay").toInt());
+    if (parser.isSet("l")) recorder.setPauseLevel(parser.value("l").toInt());
+    if (parser.isSet("d")) recorder.setPauseActivationDelay(parser.value("d").toInt());
     if (parser.isSet("s")) recorder.setSplitMode(true);
+    if (parser.isSet("r")) recorder.setRecordAtLaunch(true);
+    if (parser.isSet("cns1")) recorder.setJackConnections1(parser.value("cns1"));
+    if (parser.isSet("cns2")) recorder.setJackConnections1(parser.value("cns2"));
+    if (parser.isSet("dir")) recorder.setOutputDir(QDir(parser.value("dir")));
+    if (parser.isSet("pcmd")) recorder.setProcessCmdLine(parser.value("pcmd"));
+    if (parser.isSet("jack-auto")) recorder.setJackAutoMode(true);
+    if (parser.isSet("jack-trans")) recorder.setJackTransMode(true);
 }
 
 void writeSettings(Recorder &recorder, QSettings &settings, QCommandLineParser &parser)
@@ -106,7 +113,7 @@ void writeSettings(Recorder &recorder, QSettings &settings, QCommandLineParser &
 
 int main(int argc, char *argv[])
 {
-    int exitcode;
+    int exitcode = 0;
 
     // Application
     QApplication application(argc, argv);
@@ -132,12 +139,21 @@ int main(int argc, char *argv[])
     parser.setApplicationDescription("Jack simple stereo recorder");
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addOption(QCommandLineOption("no-gui", "No GUI mode."));
-    parser.addOption(QCommandLineOption("no-settings", "Do not store settings"));
 
-    parser.addOption(QCommandLineOption("l", "Pause level in db.", "pauseLevel"));
-    parser.addOption(QCommandLineOption("d", "Pause activation delay in seconds.", "pauseDelay"));
-    parser.addOption(QCommandLineOption("s", "Split files mode."));
+    parser.addOption(QCommandLineOption(QStringList() << "c" << "config", "Show config."));
+    parser.addOption(QCommandLineOption(QStringList() << "l" << "level", "Pause level in db.", "level"));
+    parser.addOption(QCommandLineOption(QStringList() << "d" << "delay", "Pause activation delay in seconds.", "delay"));
+    parser.addOption(QCommandLineOption(QStringList() << "s" << "split", "Split files mode."));
+    parser.addOption(QCommandLineOption(QStringList() << "r" << "record", "Record at launch."));
+    parser.addOption(QCommandLineOption("cns1", "Connections string channel 1.", "connections"));
+    parser.addOption(QCommandLineOption("cns2", "Connections string channel 2.", "connections"));
+    parser.addOption(QCommandLineOption("dir", "Output directory.", "dirpath"));
+    parser.addOption(QCommandLineOption("pcmd", "Post process command line.", "cmdline"));
+    parser.addOption(QCommandLineOption("jack-auto", "Auto connect new jack ports."));
+    parser.addOption(QCommandLineOption("jack-trans", "Process jack transport events."));
+
+    parser.addOption(QCommandLineOption("no-gui", "No GUI mode, command line only."));
+    parser.addOption(QCommandLineOption("no-settings", "Ignore stored settings and do not change them."));
 
     parser.process(application);
 
@@ -146,20 +162,34 @@ int main(int argc, char *argv[])
     // Recorder
     Recorder recorder(RCD_JK_NAME);
     readSettings(recorder, settings, parser);
-    recorder.start();
 
-    if (!parser.isSet("no-gui")) {
-        // Window
-        MainWindow window(&recorder);
-        // Go !
-        window.show();
-        exitcode =  application.exec();
+    if (parser.isSet("c")) {
+        qInfo("%s:", application.translate("","Recorder Congiguration").toUtf8().constData());
+        qInfo("%s\t%f DB", "pauseLevel", recorder.getPauseLevel());
+        qInfo("%s\t%i sec", "pauseDelay", recorder.getPauseActivationDelay());
+        qInfo("%s\t%s", "splitMode", recorder.isSplitMode() ? "true" : "false");
+        qInfo("%s\t%s", "recordAtLaunch", recorder.isRecordAtLaunch() ? "true" : "false");
+        qInfo("%s\t%s", "connections1", recorder.getJackConnections1().toUtf8().constData());
+        qInfo("%s\t%s", "connections2", recorder.getJackConnections2().toUtf8().constData());
+        qInfo("%s\t%s", "outputDir", recorder.getOutputDir().absolutePath().toUtf8().constData());
+        qInfo("%s\t%s", "processCmdLine", recorder.getProcessCmdLine().toUtf8().constData());
+        qInfo("%s\t%s", "jackAutoMode", recorder.isJackAutoMode() ? "true" : "false");
+        qInfo("%s\t%s", "jackTransMode", recorder.isJackTransMode() ? "true" : "false");
     }
     else {
-        qInfo("%s %s...", application.applicationName().toLatin1(), application.translate("","Running").toLatin1());
-        exitcode =  application.exec();
+        recorder.start();
+        if (parser.isSet("no-gui")) {
+            qInfo("%s %s...", application.applicationName().toUtf8().constData(), application.translate("","Running").toUtf8().constData());
+            exitcode =  application.exec();
+        }
+        else {
+            // Window
+            MainWindow window(&recorder);
+            // Go !
+            window.show();
+            exitcode =  application.exec();
+        }
     }
-
 
     writeSettings(recorder, settings, parser);
 

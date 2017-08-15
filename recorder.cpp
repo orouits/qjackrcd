@@ -98,8 +98,17 @@ Recorder::Recorder(QString jackName)
     overruns = 0;
     pauseActivationMax = 0;
     pauseActivationCount = pauseActivationMax + 1;
+    shutdown = false;
     jackTransMode = true;
     jackAutoMode = true;
+    recordAtLaunch = false;
+    recording = false;
+    splitMode = false;
+    pauseActivationDelay = 3;
+    pauseLevel = -20;
+    diskSpace = 0;
+    leftLevel = 0;
+    rightLevel = 0;
 
     if ((jackClient = jack_client_open(jackName.toLatin1(), jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
         throw "Can't start or connect to jack server";
@@ -123,12 +132,6 @@ Recorder::Recorder(QString jackName)
 
     alternateBuffer = new float[RCD_BUFFER_FRAMES*2];
     memset(alternateBuffer, 0, RCD_BUFFER_SIZE);
-
-    setRecording(false);
-    setShutdown(false);
-    setSplitMode(false);
-    setPauseActivationDelay(3);
-    setPauseLevel(-20);
 
     // start jack client
     jack_activate(jackClient);
