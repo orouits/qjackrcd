@@ -54,10 +54,12 @@
 #define RCD_SIG_CHANGE_COUNT 4
 
 #define RCD_FRAME_SIZE sizeof(float)
+#define RCD_BUFFER_CHANNEL_FRAMES 1024 // 1024 values per channel
+#define RCD_BUFFER_FRAMES (2*RCD_BUFFER_CHANNEL_FRAMES) // 2 channels of 1024 values
+#define RCD_BUFFER_SIZE (RCD_BUFFER_FRAMES*RCD_FRAME_SIZE)
+
 #define RCD_RINGBUFFER_FRAMES (64*1024)
 #define RCD_RINGBUFFER_SIZE (2*RCD_RINGBUFFER_FRAMES*RCD_FRAME_SIZE)
-#define RCD_BUFFER_FRAMES (2*1024)
-#define RCD_BUFFER_SIZE (2*RCD_BUFFER_FRAMES*RCD_FRAME_SIZE)
 
 //=============================================================================
 // Jack callback to object calls
@@ -109,6 +111,8 @@ Recorder::Recorder(QString jackName)
     diskSpace = 0;
     leftLevel = 0;
     rightLevel = 0;
+    totalRecordSize = 0;
+    currentRecordSize = 0;
 
     if ((jackClient = jack_client_open(jackName.toLatin1(), jack_options_t(JackNullOption | JackUseExactName), 0)) == 0) {
         throw "Can't start or connect to jack server";
@@ -127,10 +131,10 @@ Recorder::Recorder(QString jackName)
     jackRingBuffer = jack_ringbuffer_create(RCD_RINGBUFFER_SIZE);
     jack_ringbuffer_reset(jackRingBuffer);
 
-    currentBuffer = new float[RCD_BUFFER_FRAMES*2];
+    currentBuffer = new float[RCD_BUFFER_FRAMES];
     memset(currentBuffer, 0, RCD_BUFFER_SIZE);
 
-    alternateBuffer = new float[RCD_BUFFER_FRAMES*2];
+    alternateBuffer = new float[RCD_BUFFER_FRAMES];
     memset(alternateBuffer, 0, RCD_BUFFER_SIZE);
 
     // start jack client
@@ -317,21 +321,21 @@ void Recorder::run()
 }
 
 void Recorder::computePauseActivationMax() {
-    pauseActivationMax = (sampleRate * pauseActivationDelay ) / RCD_BUFFER_FRAMES;
+    pauseActivationMax = (sampleRate * pauseActivationDelay ) / RCD_BUFFER_CHANNEL_FRAMES;
 }
 
 void Recorder::computeCurrentBufferLevels() {
     float sumsqr_l = 0;
     float sumsqr_r = 0;
     int ibuf = 0;
-    for (int i = 0; i < RCD_BUFFER_FRAMES; i++) {
+    for (int i = 0; i < RCD_BUFFER_CHANNEL_FRAMES; i++) {
         sumsqr_l += currentBuffer[ibuf]*currentBuffer[ibuf];
         ibuf++;
         sumsqr_r += currentBuffer[ibuf]*currentBuffer[ibuf];
         ibuf++;
     }
-    float rms_l = sqrtf( sumsqr_l / ((float)RCD_BUFFER_FRAMES) );
-    float rms_r = sqrtf( sumsqr_r / ((float)RCD_BUFFER_FRAMES) );
+    float rms_l = sqrtf( sumsqr_l / ((float)RCD_BUFFER_CHANNEL_FRAMES) );
+    float rms_r = sqrtf( sumsqr_r / ((float)RCD_BUFFER_CHANNEL_FRAMES) );
     float db_l = log10f( rms_l ) * 10;
     float db_r = log10f( rms_r ) * 10;
     leftLevel = db_l < - 40 ? - 40 : db_l;
@@ -385,6 +389,7 @@ void Recorder::closeFile() {
         processFile();
     }
     currentFilePath = "";
+    currentRecordSize = 0;
 }
 
 void Recorder::switchBuffer() {
@@ -404,13 +409,15 @@ void Recorder::readCurrentBuffer() {
 
 void Recorder::writeAlternateBuffer() {
     sf_writef_float(sndFile, alternateBuffer, RCD_BUFFER_FRAMES);
+    totalRecordSize += RCD_BUFFER_SIZE;
+    currentRecordSize += RCD_BUFFER_SIZE;
 }
 
 void Recorder::fadeinAlternateBuffer() {
     float gain = 0;
-    float gaininc = 1 / float(RCD_BUFFER_FRAMES);
+    float gaininc = 1 / float(RCD_BUFFER_CHANNEL_FRAMES);
     int ibuf = 0;
-    for (int i = 0; i < RCD_BUFFER_FRAMES; i++) {
+    for (int i = 0; i < RCD_BUFFER_CHANNEL_FRAMES; i++) {
         alternateBuffer[ibuf++] *= gain;
         alternateBuffer[ibuf++] *= gain;
         gain += gaininc;
@@ -419,9 +426,9 @@ void Recorder::fadeinAlternateBuffer() {
 
 void Recorder::fadeoutAlternateBuffer() {
     float gain = 1;
-    float gaininc = 1 / float(RCD_BUFFER_FRAMES);
+    float gaininc = 1 / float(RCD_BUFFER_CHANNEL_FRAMES);
     int ibuf = 0;
-    for (int i = 0; i < RCD_BUFFER_FRAMES; i++) {
+    for (int i = 0; i < RCD_BUFFER_CHANNEL_FRAMES; i++) {
         alternateBuffer[ibuf++] *= gain;
         alternateBuffer[ibuf++] *= gain;
         gain -= gaininc;

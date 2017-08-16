@@ -139,20 +139,24 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.addVersionOption();
 
-    parser.addOption(QCommandLineOption(QStringList() << "c" << "config", "Show config."));
-    parser.addOption(QCommandLineOption(QStringList() << "l" << "level", "Pause level in db.", "level"));
-    parser.addOption(QCommandLineOption(QStringList() << "d" << "delay", "Pause activation delay in seconds.", "delay"));
-    parser.addOption(QCommandLineOption(QStringList() << "s" << "split", "Split files mode."));
-    parser.addOption(QCommandLineOption(QStringList() << "r" << "record", "Record at launch."));
-    parser.addOption(QCommandLineOption("cns1", "Connections string channel 1.", "connections"));
-    parser.addOption(QCommandLineOption("cns2", "Connections string channel 2.", "connections"));
-    parser.addOption(QCommandLineOption("dir", "Output directory.", "dirpath"));
-    parser.addOption(QCommandLineOption("pcmd", "Post process command line.", "cmdline"));
-    parser.addOption(QCommandLineOption("jack-auto", "Auto connect new jack ports."));
-    parser.addOption(QCommandLineOption("jack-trans", "Process jack transport events."));
+    parser.addOption(QCommandLineOption(QStringList() << "c" << "config", application.translate("main","Show config.")));
+    parser.addOption(QCommandLineOption(QStringList() << "l" << "level", application.translate("main","Pause level in db."), "level"));
+    parser.addOption(QCommandLineOption(QStringList() << "d" << "delay", application.translate("main","Pause activation delay in seconds."), "delay"));
+    parser.addOption(QCommandLineOption(QStringList() << "s" << "split", application.translate("main","Split files mode.")));
+    parser.addOption(QCommandLineOption(QStringList() << "r" << "record", application.translate("main","Record at launch.")));
+    parser.addOption(QCommandLineOption("cns1", application.translate("main","Connections string channel 1."), "connections"));
+    parser.addOption(QCommandLineOption("cns2", application.translate("main","Connections string channel 2."), "connections"));
+    parser.addOption(QCommandLineOption("dir", application.translate("main","Output directory."), "dirpath"));
+    parser.addOption(QCommandLineOption("pcmd", application.translate("main","Post process command line."), "cmdline"));
+    parser.addOption(QCommandLineOption("jack-auto", application.translate("main","Auto connect new jack ports.")));
+    parser.addOption(QCommandLineOption("jack-trans", application.translate("main","Process jack transport events.")));
 
-    parser.addOption(QCommandLineOption("no-gui", "No GUI mode, command line only."));
-    parser.addOption(QCommandLineOption("no-settings", "Ignore stored settings and do not change them."));
+    //parser.addOption(QCommandLineOption("exit-on-pause", application.translate("main","Exit the application at the first pause.")));
+    //parser.addOption(QCommandLineOption("exit-on-time", application.translate("main","Exit the application after a delay in seconds."), "delay"));
+    //parser.addOption(QCommandLineOption("exit-on-size", application.translate("main","Exit the application after a size of recorded data reached."), "size"));
+
+    //parser.addOption(QCommandLineOption("no-gui", application.translate("main","No GUI mode, command line only.")));
+    parser.addOption(QCommandLineOption("no-settings", application.translate("main","Ignore stored settings and do not change them.")));
 
     parser.process(application);
 
@@ -163,7 +167,7 @@ int main(int argc, char *argv[])
     readSettings(recorder, settings, parser);
 
     if (parser.isSet("c")) {
-        qInfo("%s:", application.translate("","Recorder Congiguration").toUtf8().constData());
+        qInfo("%s:", application.translate("main","Recorder Congiguration").toUtf8().constData());
         qInfo("%s\t%f DB", "pauseLevel", recorder.getPauseLevel());
         qInfo("%s\t%i sec", "pauseDelay", recorder.getPauseActivationDelay());
         qInfo("%s\t%s", "splitMode", recorder.isSplitMode() ? "true" : "false");
@@ -177,14 +181,12 @@ int main(int argc, char *argv[])
     }
     else {
         recorder.start();
-        if (parser.isSet("no-gui")) {
-            qInfo("%s %s...", application.applicationName().toUtf8().constData(), application.translate("","Running").toUtf8().constData());
+        if (false /*parser.isSet("no-gui")*/) {
+            qInfo("%s %s", application.applicationName().toUtf8().constData(), application.translate("main","Running in console mode...").toUtf8().constData());
             exitcode =  application.exec();
         }
         else {
-            // Window
             MainWindow window(&recorder);
-            // Go !
             window.show();
             exitcode =  application.exec();
         }

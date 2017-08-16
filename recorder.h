@@ -55,6 +55,8 @@ class Recorder: public QThread
     float *alternateBuffer;
 
     int diskSpace;
+    long totalRecordSize;
+    long currentRecordSize;
 
     QString currentFilePath;
     QString processFilePath;
@@ -156,6 +158,8 @@ public:
     float getPauseLevel() { return pauseLevel; }
     float getLeftLevel() { return leftLevel; }
     float getRightLevel() { return rightLevel; }
+    long getCurrentRecordSize() { return currentRecordSize; }
+    long getTotalRecordSize() { return totalRecordSize; }
 
 signals:
     void statusChanged();

@@ -203,6 +203,7 @@ void MainWindow::on_optOutputDirButton_clicked()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    recorder->setRecording(false);
     event->accept();
 }
 
