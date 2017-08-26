@@ -129,26 +129,29 @@ void MainWindow::onRecorderStatusChanged()
         if (ui->postLastEdit->text() != recorder->getProcessFilePath())
             ui->postLastEdit->setText(recorder->getProcessFilePath());
 
+        QString statusText;
         if (recorder->isRecording()) {
             ui->recButton->setEnabled(true);
             if (recorder->isPaused()) {
                 ui->recButton->setIcon(*iconOrange);
-                ui->statusBar->showMessage(tr("Waiting for sound..."));
+                statusText = tr("Waiting for sound...");
             }
             else {
                 ui->recButton->setIcon(*iconRed);
-                ui->statusBar->showMessage(tr("Recording..."));
+                statusText = tr("Recording...");
             }
         }
         else if (!recorder->isRecordEnabled()) {
             ui->recButton->setEnabled(false);
-            ui->statusBar->showMessage(tr("Disabled"));
+            statusText = tr("Disabled");
         }
         else {
             ui->recButton->setEnabled(true);
             ui->recButton->setIcon(*iconGreen);
-            ui->statusBar->showMessage(tr("Ready"));
+            statusText = tr("Ready");
         }
+        QString statusMessage;
+        ui->statusBar->showMessage(statusMessage.sprintf("%s %ldKB - %ldKB", statusText.toUtf8().constData(), recorder->getCurrentRecordSize()/1024, recorder->getTotalRecordSize()/1024));
     }
 }
 

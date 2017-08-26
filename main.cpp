@@ -37,6 +37,7 @@
 * It Depends on jack, sndfile and qt4 libraries.
 */
 #include "mainwindow.h"
+#include "mainconsole.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
@@ -168,8 +169,8 @@ int main(int argc, char *argv[])
 
     if (parser.isSet("c")) {
         qInfo("%s:", application.translate("main","Recorder Congiguration").toUtf8().constData());
-        qInfo("%s\t%f DB", "pauseLevel", recorder.getPauseLevel());
-        qInfo("%s\t%i sec", "pauseDelay", recorder.getPauseActivationDelay());
+        qInfo("%s\t%.2f", "pauseLevel(DB)", recorder.getPauseLevel());
+        qInfo("%s\t%d", "pauseDelay(sec)", recorder.getPauseActivationDelay());
         qInfo("%s\t%s", "splitMode", recorder.isSplitMode() ? "true" : "false");
         qInfo("%s\t%s", "recordAtLaunch", recorder.isRecordAtLaunch() ? "true" : "false");
         qInfo("%s\t%s", "connections1", recorder.getJackConnections1().toUtf8().constData());

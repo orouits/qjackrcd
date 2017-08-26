@@ -51,18 +51,22 @@ OBJECTS_DIR   = build/
 SOURCES       = main.cpp \
 		mainwindow.cpp \
 		recorder.cpp \
-		qjrmeter.cpp build/qrc_qjackrcd.cpp \
+		qjrmeter.cpp \
+		mainconsole.cpp build/qrc_qjackrcd.cpp \
 		build/moc_mainwindow.cpp \
 		build/moc_recorder.cpp \
-		build/moc_qjrmeter.cpp
+		build/moc_qjrmeter.cpp \
+		build/moc_mainconsole.cpp
 OBJECTS       = build/main.o \
 		build/mainwindow.o \
 		build/recorder.o \
 		build/qjrmeter.o \
+		build/mainconsole.o \
 		build/qrc_qjackrcd.o \
 		build/moc_mainwindow.o \
 		build/moc_recorder.o \
-		build/moc_qjrmeter.o
+		build/moc_qjrmeter.o \
+		build/moc_mainconsole.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -121,10 +125,12 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		qjackrcd.pro mainwindow.h \
 		recorder.h \
-		qjrmeter.h main.cpp \
+		qjrmeter.h \
+		mainconsole.h main.cpp \
 		mainwindow.cpp \
 		recorder.cpp \
-		qjrmeter.cpp
+		qjrmeter.cpp \
+		mainconsole.cpp
 QMAKE_TARGET  = qjackrcd
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = qjackrcd
@@ -294,8 +300,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents qjackrcd_en.ts qjackrcd_fr.ts qjackrcd_it.ts qjackrcd_cs.ts qjackrcd_de.ts $(DISTDIR)/
 	$(COPY_FILE) --parents qjackrcd.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h recorder.h qjrmeter.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp recorder.cpp qjrmeter.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h recorder.h qjrmeter.h mainconsole.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp recorder.cpp qjrmeter.cpp mainconsole.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 	$(COPY_FILE) --parents qjackrcd_en.ts qjackrcd_fr.ts qjackrcd_it.ts qjackrcd_cs.ts qjackrcd_de.ts $(DISTDIR)/
 
@@ -316,7 +322,7 @@ distclean: clean
 prepare:
 	test -d build || mkdir -p build; test -d locale || mkdir -p locale;
 
-docs: Doxyfile main.cpp mainwindow.cpp recorder.cpp qjrmeter.cpp mainwindow.h recorder.h qjrmeter.h
+docs: Doxyfile main.cpp mainwindow.cpp recorder.cpp qjrmeter.cpp mainconsole.cpp mainwindow.h recorder.h qjrmeter.h mainconsole.h
 	doxygen Doxyfile
 
 qjackrcd.1.gz: manpage.sgml
@@ -356,9 +362,9 @@ build/qrc_qjackrcd.cpp: qjackrcd.qrc \
 		record-orange.png
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name qjackrcd qjackrcd.qrc -o build/qrc_qjackrcd.cpp
 
-compiler_moc_header_make_all: build/moc_mainwindow.cpp build/moc_recorder.cpp build/moc_qjrmeter.cpp
+compiler_moc_header_make_all: build/moc_mainwindow.cpp build/moc_recorder.cpp build/moc_qjrmeter.cpp build/moc_mainconsole.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) build/moc_mainwindow.cpp build/moc_recorder.cpp build/moc_qjrmeter.cpp
+	-$(DEL_FILE) build/moc_mainwindow.cpp build/moc_recorder.cpp build/moc_qjrmeter.cpp build/moc_mainconsole.cpp
 build/moc_mainwindow.cpp: recorder.h \
 		mainwindow.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/ol/src/qjackrcd -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o build/moc_mainwindow.cpp
@@ -368,6 +374,10 @@ build/moc_recorder.cpp: recorder.h
 
 build/moc_qjrmeter.cpp: qjrmeter.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/ol/src/qjackrcd -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include qjrmeter.h -o build/moc_qjrmeter.cpp
+
+build/moc_mainconsole.cpp: recorder.h \
+		mainconsole.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/ol/src/qjackrcd -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainconsole.h -o build/moc_mainconsole.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -389,7 +399,8 @@ compiler_clean: compiler_updateqm_clean compiler_rcc_clean compiler_moc_header_c
 ####### Compile
 
 build/main.o: main.cpp mainwindow.h \
-		recorder.h
+		recorder.h \
+		mainconsole.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/main.o main.cpp
 
 build/mainwindow.o: mainwindow.cpp mainwindow.h \
@@ -404,6 +415,10 @@ build/recorder.o: recorder.cpp recorder.h
 build/qjrmeter.o: qjrmeter.cpp qjrmeter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/qjrmeter.o qjrmeter.cpp
 
+build/mainconsole.o: mainconsole.cpp mainconsole.h \
+		recorder.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/mainconsole.o mainconsole.cpp
+
 build/qrc_qjackrcd.o: build/qrc_qjackrcd.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/qrc_qjackrcd.o build/qrc_qjackrcd.cpp
 
@@ -415,6 +430,9 @@ build/moc_recorder.o: build/moc_recorder.cpp
 
 build/moc_qjrmeter.o: build/moc_qjrmeter.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/moc_qjrmeter.o build/moc_qjrmeter.cpp
+
+build/moc_mainconsole.o: build/moc_mainconsole.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/moc_mainconsole.o build/moc_mainconsole.cpp
 
 ####### Install
 

@@ -21,11 +21,13 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     recorder.cpp \
     qjrmeter.cpp \
+    mainconsole.cpp
 
 HEADERS += \
     mainwindow.h \
     recorder.h \
     qjrmeter.h \
+    mainconsole.h
 
 FORMS += mainwindow.ui
 
