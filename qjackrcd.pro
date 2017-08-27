@@ -91,3 +91,7 @@ man.depends = manpage.sgml
 man.commands = docbook-to-man $$man.depends | gzip > $$man.target
 QMAKE_EXTRA_TARGETS += man
 QMAKE_CLEAN += $$man.target
+
+DISTFILES += \
+    manpage.sgml \
+    Doxyfile
