@@ -78,6 +78,7 @@ class Recorder: public QThread
     bool recordAtLaunch;
     bool jackAutoMode;
     bool jackTransMode;
+    bool jackTransFirstInvocation;
     QDir outputDir;
 
     float leftLevel;

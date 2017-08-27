@@ -102,6 +102,7 @@ Recorder::Recorder(QString jackName)
     pauseActivationCount = pauseActivationMax + 1;
     shutdown = false;
     jackTransMode = true;
+    jackTransFirstInvocation = true;
     jackAutoMode = true;
     recordAtLaunch = false;
     recording = false;
@@ -163,12 +164,13 @@ Recorder::~Recorder()
 
 int Recorder::jackSync(jack_transport_state_t state, jack_position_t *pos)
 {
-    if (isJackTransMode()) {
-        if (state == JackTransportStopped)
-            setRecording(false);
-        else if (state == JackTransportStarting)
-            setRecording(true);
+    // at launch, Jack sends its transport state.
+    // this conflicts with recordAtLaunch feature.
+    // jackTransFirstInvocation is here to avoid this issue.
+    if (isJackTransMode() && (!jackTransFirstInvocation || !isRecordAtLaunch())) {
+        setRecording(state != JackTransportStopped);
     }
+    jackTransFirstInvocation = false;
     return isRecordEnabled();
 }
 

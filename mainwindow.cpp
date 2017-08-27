@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QTextStream>
 
 #define POSTCMD_NONE_ITEM 0
 #define POSTCMD_OGG_ITEM 1
@@ -129,29 +130,30 @@ void MainWindow::onRecorderStatusChanged()
         if (ui->postLastEdit->text() != recorder->getProcessFilePath())
             ui->postLastEdit->setText(recorder->getProcessFilePath());
 
-        QString statusText;
+        QString statusMessage;
+        QTextStream str(&statusMessage);
         if (recorder->isRecording()) {
             ui->recButton->setEnabled(true);
             if (recorder->isPaused()) {
                 ui->recButton->setIcon(*iconOrange);
-                statusText = tr("Waiting for sound...");
+                str << tr("Waiting for sound...");
             }
             else {
                 ui->recButton->setIcon(*iconRed);
-                statusText = tr("Recording...");
+                str << tr("Recording...");
             }
         }
         else if (!recorder->isRecordEnabled()) {
             ui->recButton->setEnabled(false);
-            statusText = tr("Disabled");
+            str << tr("Disabled");
         }
         else {
             ui->recButton->setEnabled(true);
             ui->recButton->setIcon(*iconGreen);
-            statusText = tr("Ready");
+            str << tr("Ready");
         }
-        QString statusMessage;
-        ui->statusBar->showMessage(statusMessage.sprintf("%s %ldKB - %ldKB", statusText.toUtf8().constData(), recorder->getCurrentRecordSize()/1024, recorder->getTotalRecordSize()/1024));
+        str << " " << recorder->getCurrentRecordSize()/1024 << "KB - " << recorder->getTotalRecordSize()/1024 << "KB";
+        ui->statusBar->showMessage(statusMessage);
     }
 }
 

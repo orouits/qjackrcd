@@ -473,18 +473,9 @@ uninstall_icon: FORCE
 	-$(DEL_DIR) $(INSTALL_ROOT)/usr/local/share/pixmaps/ 
 
 
-install_manpage: first FORCE
-	@test -d $(INSTALL_ROOT)/usr/local/share/man/man1 || mkdir -p $(INSTALL_ROOT)/usr/local/share/man/man1
-	-$(INSTALL_FILE) /home/ol/src/qjackrcd/qjackrcd.1.gz $(INSTALL_ROOT)/usr/local/share/man/man1/
+install: install_target install_translations install_desktop install_icon  FORCE
 
-uninstall_manpage: FORCE
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/usr/local/share/man/man1/qjackrcd.1.gz
-	-$(DEL_DIR) $(INSTALL_ROOT)/usr/local/share/man/man1/ 
-
-
-install: install_target install_translations install_desktop install_icon install_manpage  FORCE
-
-uninstall: uninstall_target uninstall_translations uninstall_desktop uninstall_icon uninstall_manpage  FORCE
+uninstall: uninstall_target uninstall_translations uninstall_desktop uninstall_icon  FORCE
 
 FORCE:
 

@@ -59,13 +59,13 @@ void readSettings(Recorder &recorder, QSettings &settings, QCommandLineParser &p
         recorder.setPauseLevel(settings.value("pauseLevel", -20).toFloat());
         recorder.setPauseActivationDelay(settings.value("pauseActivationDelay", 3).toInt());
         recorder.setSplitMode(settings.value("splitMode", false).toBool());
+        recorder.setRecordAtLaunch(settings.value("recordAtLaunch", false).toBool());
         recorder.setProcessCmdLine(settings.value("processCmdLine", "").toString());
         recorder.setJackConnections1(settings.value("connections1", "").toString());
         recorder.setJackConnections2(settings.value("connections2", "").toString());
         recorder.setJackAutoMode(settings.value("jackAuto", true).toBool());
         recorder.setJackTransMode(settings.value("jackTrans", true).toBool());
         recorder.setOutputDir(QDir(settings.value("outputDir", QDir::home().absolutePath()).toString()));
-        recorder.setRecordAtLaunch(settings.value("recordAtLaunch", false).toBool());
         settings.endGroup();
     }
 
@@ -88,13 +88,13 @@ void writeSettings(Recorder &recorder, QSettings &settings, QCommandLineParser &
         settings.setValue("pauseLevel", recorder.getPauseLevel());
         settings.setValue("pauseActivationDelay", recorder.getPauseActivationDelay());
         settings.setValue("splitMode", recorder.isSplitMode());
+        settings.setValue("recordAtLaunch", recorder.isRecordAtLaunch());
         settings.setValue("processCmdLine", recorder.getProcessCmdLine());
         settings.setValue("connections1", recorder.getJackConnections1());
         settings.setValue("connections2", recorder.getJackConnections2());
         settings.setValue("jackAuto", recorder.isJackAutoMode());
         settings.setValue("jackTrans", recorder.isJackTransMode());
         settings.setValue("outputDir", recorder.getOutputDir().absolutePath());
-        settings.setValue("recordAtLaunch", recorder.isRecordAtLaunch());
         settings.endGroup();
     }
 }
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
     //parser.addOption(QCommandLineOption("exit-on-time", application.translate("main","Exit the application after a delay in seconds."), "delay"));
     //parser.addOption(QCommandLineOption("exit-on-size", application.translate("main","Exit the application after a size of recorded data reached."), "size"));
 
-    //parser.addOption(QCommandLineOption("no-gui", application.translate("main","No GUI mode, command line only.")));
+    parser.addOption(QCommandLineOption("no-gui", application.translate("main","No GUI mode, command line only.")));
     parser.addOption(QCommandLineOption("no-settings", application.translate("main","Ignore stored settings and do not change them.")));
 
     parser.process(application);
@@ -168,22 +168,12 @@ int main(int argc, char *argv[])
     readSettings(recorder, settings, parser);
 
     if (parser.isSet("c")) {
-        qInfo("%s:", application.translate("main","Recorder Congiguration").toUtf8().constData());
-        qInfo("%s\t%.2f", "pauseLevel(DB)", recorder.getPauseLevel());
-        qInfo("%s\t%d", "pauseDelay(sec)", recorder.getPauseActivationDelay());
-        qInfo("%s\t%s", "splitMode", recorder.isSplitMode() ? "true" : "false");
-        qInfo("%s\t%s", "recordAtLaunch", recorder.isRecordAtLaunch() ? "true" : "false");
-        qInfo("%s\t%s", "connections1", recorder.getJackConnections1().toUtf8().constData());
-        qInfo("%s\t%s", "connections2", recorder.getJackConnections2().toUtf8().constData());
-        qInfo("%s\t%s", "outputDir", recorder.getOutputDir().absolutePath().toUtf8().constData());
-        qInfo("%s\t%s", "processCmdLine", recorder.getProcessCmdLine().toUtf8().constData());
-        qInfo("%s\t%s", "jackAutoMode", recorder.isJackAutoMode() ? "true" : "false");
-        qInfo("%s\t%s", "jackTransMode", recorder.isJackTransMode() ? "true" : "false");
+        MainConsole console(&recorder);
     }
     else {
         recorder.start();
-        if (false /*parser.isSet("no-gui")*/) {
-            qInfo("%s %s", application.applicationName().toUtf8().constData(), application.translate("main","Running in console mode...").toUtf8().constData());
+        if (parser.isSet("no-gui")) {
+            MainConsole console(&recorder);
             exitcode =  application.exec();
         }
         else {
