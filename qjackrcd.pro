@@ -42,10 +42,14 @@ TRANSLATIONS += \
     qjackrcd_cs.ts \
     qjackrcd_de.ts \
 
+DISTFILES += \
+    manpage.sgml \
+    Doxyfile
+
 OTHER_FILES += \
     README \
     LICENSE \
-    publish.sh \
+    publish.sh
 
 # prepare target
 prepare.target = prepare
@@ -92,6 +96,4 @@ man.commands = docbook-to-man $$man.depends | gzip > $$man.target
 QMAKE_EXTRA_TARGETS += man
 QMAKE_CLEAN += $$man.target
 
-DISTFILES += \
-    manpage.sgml \
-    Doxyfile
+
