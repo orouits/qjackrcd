@@ -73,10 +73,10 @@ void readSettings(Recorder &recorder, QSettings &settings, QCommandLineParser &p
     if (parser.isSet("d")) recorder.setPauseActivationDelay(parser.value("d").toInt());
     if (parser.isSet("s")) recorder.setSplitMode(true);
     if (parser.isSet("r")) recorder.setRecordAtLaunch(true);
-    if (parser.isSet("cns1")) recorder.setJackConnections1(parser.value("cns1"));
-    if (parser.isSet("cns2")) recorder.setJackConnections1(parser.value("cns2"));
     if (parser.isSet("dir")) recorder.setOutputDir(QDir(parser.value("dir")));
     if (parser.isSet("pcmd")) recorder.setProcessCmdLine(parser.value("pcmd"));
+    if (parser.isSet("jack-cns1")) recorder.setJackConnections1(parser.value("jack-cns1"));
+    if (parser.isSet("jack-cns2")) recorder.setJackConnections1(parser.value("jack-cns2"));
     if (parser.isSet("jack-auto")) recorder.setJackAutoMode(true);
     if (parser.isSet("jack-trans")) recorder.setJackTransMode(true);
 }
@@ -145,10 +145,10 @@ int main(int argc, char *argv[])
     parser.addOption(QCommandLineOption(QStringList() << "d" << "delay", application.translate("main","Pause activation delay in seconds."), "delay"));
     parser.addOption(QCommandLineOption(QStringList() << "s" << "split", application.translate("main","Split files mode.")));
     parser.addOption(QCommandLineOption(QStringList() << "r" << "record", application.translate("main","Record at launch.")));
-    parser.addOption(QCommandLineOption("cns1", application.translate("main","Connections string channel 1."), "connections"));
-    parser.addOption(QCommandLineOption("cns2", application.translate("main","Connections string channel 2."), "connections"));
     parser.addOption(QCommandLineOption("dir", application.translate("main","Output directory."), "dirpath"));
     parser.addOption(QCommandLineOption("pcmd", application.translate("main","Post process command line."), "cmdline"));
+    parser.addOption(QCommandLineOption("jack-cns1", application.translate("main","Connections string channel 1."), "connections"));
+    parser.addOption(QCommandLineOption("jack-cns2", application.translate("main","Connections string channel 2."), "connections"));
     parser.addOption(QCommandLineOption("jack-auto", application.translate("main","Auto connect new jack ports.")));
     parser.addOption(QCommandLineOption("jack-trans", application.translate("main","Process jack transport events.")));
 

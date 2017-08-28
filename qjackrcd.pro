@@ -44,7 +44,8 @@ TRANSLATIONS += \
 
 DISTFILES += \
     manpage.sgml \
-    Doxyfile
+    Doxyfile \
+    qjackrcd.1.sgml
 
 OTHER_FILES += \
     README \
@@ -94,6 +95,6 @@ man.target = qjackrcd.1.gz
 man.depends = qjackrcd.1.sgml
 man.commands = docbook-to-man $$man.depends | gzip > $$man.target
 QMAKE_EXTRA_TARGETS += man
-QMAKE_CLEAN += -r $$man.target
+QMAKE_CLEAN += $$man.target
 
 

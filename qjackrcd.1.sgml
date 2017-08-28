@@ -1,33 +1,17 @@
 <!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 
-<!-- Process this file with docbook-to-man to generate an nroff manual
-     page: `docbook-to-man manpage.sgml > manpage.1'.  You may view
-     the manual page with: `docbook-to-man manpage.sgml | nroff -man |
-     less'.  A typical entry in a Makefile or Makefile.am is:
-
-manpage.1: manpage.sgml
-	docbook-to-man $< > $@
-
-
-	The docbook-to-man binary is found in the docbook-to-man package.
-	Please remember that if you create the nroff version in one of the
-	debian/rules file targets (such as build), you will need to include
-	docbook-to-man in your Build-Depends control field.
-
-  -->
-
   <!-- Fill in your name for FIRSTNAME and SURNAME. -->
-  <!ENTITY dhfirstname "<firstname>FIRSTNAME</firstname>">
-  <!ENTITY dhsurname   "<surname>SURNAME</surname>">
+  <!ENTITY dhfirstname "<firstname>Olivier</firstname>">
+  <!ENTITY dhsurname   "<surname>ROUITS</surname>">
   <!-- Please adjust the date whenever revising the manpage. -->
-  <!ENTITY dhdate      "<date>#SHORTDATE#</date>">
+  <!ENTITY dhdate      "<date>2017</date>">
   <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
        allowed: see man(7), man(1). -->
-  <!ENTITY dhsection   "<manvolnum>SECTION</manvolnum>">
-  <!ENTITY dhemail     "<email>#EMAIL#</email>">
-  <!ENTITY dhusername  "#USERNAME#">
-  <!ENTITY dhucpackage "<refentrytitle>#UCPACKAGE#</refentrytitle>">
-  <!ENTITY dhpackage   "#PACKAGE#">
+  <!ENTITY dhsection   "<manvolnum>1</manvolnum>">
+  <!ENTITY dhemail     "<email>olivier.rouits@free.fr</email>">
+  <!ENTITY dhusername  "Olivier ROUITS">
+  <!ENTITY dhucpackage "<refentrytitle>qjackrcd</refentrytitle>">
+  <!ENTITY dhpackage   "qjackrcd">
 
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">
@@ -44,7 +28,7 @@ manpage.1: manpage.sgml
       &dhsurname;
     </author>
     <copyright>
-      <year>2003</year>
+      <year>2017</year>
       <holder>&dhusername;</holder>
     </copyright>
     &dhdate;
@@ -57,30 +41,39 @@ manpage.1: manpage.sgml
   <refnamediv>
     <refname>&dhpackage;</refname>
 
-    <refpurpose>program to do something</refpurpose>
+    <refpurpose>QJackRcd is a simple stereo recorder for Jack with few features as silence processing for automatic pause, file splitting, background file post-processing. It may be used with QJackCtl</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
       <command>&dhpackage;</command>
-
-      <arg><option>-e <replaceable>this</replaceable></option></arg>
-
-      <arg><option>--example <replaceable>that</replaceable></option></arg>
+    </cmdsynopsis>
+    <cmdsynopsis>
+      <command>&dhpackage;</command>
+      <arg><option>-c|--config</option></arg>
+    </cmdsynopsis>
+    <cmdsynopsis>
+      <command>&dhpackage;</command>
+      <arg><option>-l|--level <replaceable>level</replaceable></option></arg>
+      <arg><option>-d|--delay <replaceable>delay</replaceable></option></arg>
+      <arg><option>-s|--split</option></arg>
+      <arg><option>-r|--record</option></arg>
+      <arg><option>--dir <replaceable>dirpath</replaceable></option></arg>
+      <arg><option>--pcmd <replaceable>command</replaceable></option></arg>
+      <arg><option>--jack-cns1 <replaceable>connections</replaceable></option></arg>
+      <arg><option>--jack-cns2 <replaceable>connections</replaceable></option></arg>
+      <arg><option>--jack-auto</option></arg>
+      <arg><option>--jack-trans</option></arg>
+      <arg><option>--no-gui</option></arg>
+      <arg><option>--no-settings</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
     <title>DESCRIPTION</title>
 
     <para>This manual page documents briefly the
-      <command>&dhpackage;</command> and <command>bar</command>
-      commands.</para>
+      <command>&dhpackage;</command> command.</para>
 
-    <para>This manual page was written for the &debian; distribution
-      because the original program does not have a manual page.
-      Instead, it has documentation in the &gnu;
-      <application>Info</application> format; see below.</para>
-
-    <para><command>&dhpackage;</command> is a program that...</para>
+    <para><command>&dhpackage;</command> is a simple stereo recorder for Jack with QT GUI mode by default. It can be launched without a window with --no-gui option for scripted automation purpose, nevertheless it is not a full console mode because DISPLAY variable must be defined.</para>
 
   </refsect1>
   <refsect1>
