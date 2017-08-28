@@ -91,9 +91,9 @@ QMAKE_CLEAN += -r $$docs.target
 
 # man pages
 man.target = qjackrcd.1.gz
-man.depends = manpage.sgml
+man.depends = qjackrcd.1.sgml
 man.commands = docbook-to-man $$man.depends | gzip > $$man.target
 QMAKE_EXTRA_TARGETS += man
-QMAKE_CLEAN += $$man.target
+QMAKE_CLEAN += -r $$man.target
 
 

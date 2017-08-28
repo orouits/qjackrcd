@@ -13,6 +13,7 @@ echo "### Make release ${ARCNAME} from scratch"
 qmake -config release
 make
 make docs
+make manpages
 
 echo "### Make tar file ${ARCNAME}.tar.gz"
 mkdir -p ".tmp/${ARCNAME}"
