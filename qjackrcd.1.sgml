@@ -41,22 +41,19 @@
   <refnamediv>
     <refname>&dhpackage;</refname>
 
-    <refpurpose>QJackRcd is a simple stereo recorder for Jack with few features as silence processing for automatic pause, file splitting, background file post-processing. It may be used with QJackCtl</refpurpose>
+    <refpurpose>is a simple stereo recorder for jack realtime sound server with few features as silence processing for automatic pause, file splitting, background file post-processing. It may be used with QJackCtl</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
       <command>&dhpackage;</command>
+      <arg><option>options</option></arg>
     </cmdsynopsis>
     <cmdsynopsis>
       <command>&dhpackage;</command>
-      <arg><option>-c|--config</option></arg>
-    </cmdsynopsis>
-    <cmdsynopsis>
-      <command>&dhpackage;</command>
-      <arg><option>-l|--level <replaceable>level</replaceable></option></arg>
-      <arg><option>-d|--delay <replaceable>delay</replaceable></option></arg>
-      <arg><option>-s|--split</option></arg>
-      <arg><option>-r|--record</option></arg>
+      <arg><option>-l,--level <replaceable>level</replaceable></option></arg>
+      <arg><option>-d,--delay <replaceable>delay</replaceable></option></arg>
+      <arg><option>-s,--split</option></arg>
+      <arg><option>-r,--record</option></arg>
       <arg><option>--dir <replaceable>dirpath</replaceable></option></arg>
       <arg><option>--pcmd <replaceable>command</replaceable></option></arg>
       <arg><option>--jack-cns1 <replaceable>connections</replaceable></option></arg>
@@ -73,58 +70,168 @@
     <para>This manual page documents briefly the
       <command>&dhpackage;</command> command.</para>
 
-    <para><command>&dhpackage;</command> is a simple stereo recorder for Jack with QT GUI mode by default. It can be launched without a window with --no-gui option for scripted automation purpose, nevertheless it is not a full console mode because DISPLAY variable must be defined.</para>
+    <para><command>&dhpackage;</command> is a simple stereo recorder for jack with QT GUI mode by default.
+    It can be launched without a window with <option>--no-gui</option> option for scripted automation purpose,
+    nevertheless it is not a full console mode and DISPLAY variable must allways be defined.</para>
 
+    <para>The two main features of this recorder are the capability to manage record pause on silence,
+    and the capability to launch post process commands on the recording files in backgroud.</para>
+
+    <para>The pause mode feature detects silence by the definition of a threshold level and a delay.
+    It can compress silences in time during recording (max = delay),
+    it can split sound between silences in several files (tracks of a vinyl record, tape, ...)
+    it can automatically stops recording at the end of the signal without needing to be on the spot.</para>
+
+    <para>Recording format is WAV with 2 channels (stereo) of float (32 bits) values (SF_FORMAT_WAV|SF_FORMAT_FLOAT sndfile library format).</para>
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
 
-    <para>These programs follow the usual &gnu; command line syntax,
+    <para>This program follow the usual &gnu; command line syntax,
       with long options starting with two dashes (`-').  A summary of
-      options is included below.  For a complete description, see the
-      <application>Info</application> files.</para>
+      options is included below.</para>
 
     <variablelist>
       <varlistentry>
-        <term><option>-h</option>
-          <option>--help</option>
-        </term>
+        <term><option>-h</option>, <option>--help</option></term>
         <listitem>
           <para>Show summary of options.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>-v</option>
-          <option>--version</option>
-        </term>
+        <term><option>-v</option>, <option>--version</option></term>
         <listitem>
           <para>Show version of program.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-c</option>, <option>--config</option></term>
+        <listitem>
+          <para>Show the configuration of the recorder on standard output and quit immediately without any GUI.
+          The configuration is a set of "key value" pairs, one per line.
+          Without other options it shows the configuration stored in the settings.
+          Some options can be overrided directly by adding them to the command line at the same time, in this case they will be stored to the settings.
+          if <option>--no-settings</option> option is added, the settings ar not loaded nor stored, then the initial configuration is the hardcoded recorder default configuration.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-l</option>, <option>--level <replaceable>level</replaceable></option>
+        </term>
+        <listitem>
+          <para>Set the level in dB. the integer value range is between -40 and 3, default is -20.
+          This signal level is a threshold below which the pause delay begins to count down before effective pause mode.
+          See <option>-d</option> delay option.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-d</option>, <option>--delay <replaceable>delay</replaceable></option>
+        </term>
+        <listitem>
+          <para>Set the delay value in seconds. The integer value range is between 0 and 300 (5 mn max), default is 3.
+          The pause mode is effective only if the level of the input signal remains below the threshold level continuously during the set delay.
+          See <option>-l</option> level option.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-s</option>, <option>--split</option>
+        </term>
+        <listitem>
+          <para>Set the split mode. default is not set.
+          When split mode is set, the pause feature do not compress silences in the same file but closes current one
+          and open a new one in pause mode, waiting for signal (greater than the threshold level).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-r</option>, <option>--record</option>
+        </term>
+        <listitem>
+          <para>Activate recording at launch. By default, recording is not activated at launch.
+          The effective status at launch may be in pause mode if the input signal is considerred as a silence.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--dir <replaceable>dirpath</replaceable></option>
+        </term>
+        <listitem>
+          <para>Set the directory of the recording WAV files. home directory by default.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--pcmd <replaceable>cmdline</replaceable></option>
+        </term>
+        <listitem>
+          <para>Set a post process command line. no post process by default.
+          When defined, each recording file is post-processed at its closing in a detached parallel process,
+          independantly of the current recording process, other post-processing processes or application closing.
+          This is particularly useful in split mode, see <option>-s</option> option.</para>
+          <para>The command line is executed in a bash instance,
+          the full path of the recording file to process is accessible by the ${0} variable.</para>
+          <para>To compress the file in ogg format on the fly, install sox command and set the command: "sox ${0} ${0%%wav}ogg"</para>
+
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--jack-cns1 <replaceable>connections</replaceable></option>
+        </term>
+        <listitem>
+          <para>Set the first stereo channel input jack connections. No jack connections by default.
+          the format is "client:port;client:port;..."</para>
+          <para>Set "system:capture_1;" to connect to the system capture channel.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--jack-cns2 <replaceable>connections</replaceable></option>
+        </term>
+        <listitem>
+          <para>Set the second stereo channel input jack connections. No jack connections by default.
+          the format is "client:port;client:port;..."</para>
+          <para>Set "system:capture_2;" to connect to the system capture channel.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--jack-auto</option>
+        </term>
+        <listitem>
+          <para>Connect jack new clients on the fly. No connections on the fly by default.
+          This mode is usefull when sound producers are known/declared after recorder launch.
+          In this mode the application auto connect new jack clients (2 first ports) only if there is no connection already set.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--jack-trans</option>
+        </term>
+        <listitem>
+          <para>Synchronize recording status with jack transport status. No synchronization by default.
+          This mode is useful to synchronize recording with midi softwares trough jack transport.
+          Warning - to stop recording you must rewind in jack transport.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--no-gui</option>
+        </term>
+        <listitem>
+          <para>Invoke the application in command line mode only. GUI by default.
+          This mode is useful for recording automation by script.
+          The standard output is used to show the configuration (cannot be changed while running), recorder status and signal level.
+          Hit ENTER key to stop the application.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--no-settings</option>
+        </term>
+        <listitem>
+          <para>Do not load nor store options in the settings. use settings by default.
+          This mode is useful to avoid settings modifications and define temporary options on command line.
+          Can be used either in console or graphic mode.
+          When this option is not set, all option overrided in command line is stored in the current settings at application closing.</para>
         </listitem>
       </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
-    <title>SEE ALSO</title>
-
-    <para>bar (1), baz (1).</para>
-
-    <para>The programs are documented fully by <citetitle>The Rise and
-      Fall of a Fooish Bar</citetitle> available via the
-      <application>Info</application> system.</para>
-  </refsect1>
-  <refsect1>
     <title>AUTHOR</title>
 
-    <para>This manual page was written by &dhusername; &dhemail; for
-      the &debian; system (and may be used by others).  Permission is
-      granted to copy, distribute and/or modify this document under
-      the terms of the &gnu; General Public License, Version 2 any
-      later version published by the Free Software Foundation.
-    </para>
-    <para>
-      On Debian systems, the complete text of the GNU General Public
-      License can be found in /usr/share/common-licenses/GPL.
-    </para>
+    <para>This manual page was written by &dhusername; &dhemail;</para>
 
   </refsect1>
 </refentry>

@@ -126,10 +126,10 @@ public:
     void jackPortReg(jack_port_id_t port_id, int reg);
     void jackShutdown();
 
-    QString getJackConnections1() {return getJackConnections(jackInputPort1);}
-    QString getJackConnections2() {return getJackConnections(jackInputPort2);}
-    void setJackConnections1(QString cnxLine) {setJackConnections(cnxLine, jackInputPort1);}
-    void setJackConnections2(QString cnxLine) {setJackConnections(cnxLine, jackInputPort2);}
+    QString getJackCns1() {return getJackConnections(jackInputPort1);}
+    QString getJackCns2() {return getJackConnections(jackInputPort2);}
+    void setJackCns1(QString cns) {setJackConnections(cns, jackInputPort1);}
+    void setJackCns2(QString cns) {setJackConnections(cns, jackInputPort2);}
     void setJackAutoMode(bool val) { jackAutoMode = val; }
     bool isJackAutoMode() { return jackAutoMode; }
     void setJackTransMode(bool val) { jackTransMode = val; }

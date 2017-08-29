@@ -13,8 +13,8 @@ MainConsole::MainConsole(Recorder *recorder, QObject *parent) : QObject(parent),
     qout << "pauseDelay(sec)" << "\t" << recorder->getPauseActivationDelay() << endl;
     qout << "splitMode" << "\t" << toBoolText(recorder->isSplitMode()) << endl;
     qout << "recordAtLaunch" << "\t" << toBoolText(recorder->isRecordAtLaunch()) << endl;
-    qout << "connections1" << "\t" << recorder->getJackConnections1() << endl;
-    qout << "connections2" << "\t" << recorder->getJackConnections2() << endl;
+    qout << "connections1" << "\t" << recorder->getJackCns1() << endl;
+    qout << "connections2" << "\t" << recorder->getJackCns2() << endl;
     qout << "outputDir" << "\t" << recorder->getOutputDir().absolutePath() << endl;
     qout << "processCmdLine" << "\t" << recorder->getProcessCmdLine() << endl;
     qout << "jackAutoMode" << "\t" << toBoolText(recorder->isJackAutoMode()) << endl;

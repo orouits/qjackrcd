@@ -61,8 +61,8 @@ void readSettings(Recorder &recorder, QSettings &settings, QCommandLineParser &p
         recorder.setSplitMode(settings.value("splitMode", false).toBool());
         recorder.setRecordAtLaunch(settings.value("recordAtLaunch", false).toBool());
         recorder.setProcessCmdLine(settings.value("processCmdLine", "").toString());
-        recorder.setJackConnections1(settings.value("connections1", "").toString());
-        recorder.setJackConnections2(settings.value("connections2", "").toString());
+        recorder.setJackCns1(settings.value("jackCns1", "").toString());
+        recorder.setJackCns2(settings.value("jackCns2", "").toString());
         recorder.setJackAutoMode(settings.value("jackAuto", true).toBool());
         recorder.setJackTransMode(settings.value("jackTrans", true).toBool());
         recorder.setOutputDir(QDir(settings.value("outputDir", QDir::home().absolutePath()).toString()));
@@ -75,8 +75,8 @@ void readSettings(Recorder &recorder, QSettings &settings, QCommandLineParser &p
     if (parser.isSet("r")) recorder.setRecordAtLaunch(true);
     if (parser.isSet("dir")) recorder.setOutputDir(QDir(parser.value("dir")));
     if (parser.isSet("pcmd")) recorder.setProcessCmdLine(parser.value("pcmd"));
-    if (parser.isSet("jack-cns1")) recorder.setJackConnections1(parser.value("jack-cns1"));
-    if (parser.isSet("jack-cns2")) recorder.setJackConnections1(parser.value("jack-cns2"));
+    if (parser.isSet("jack-cns1")) recorder.setJackCns1(parser.value("jack-cns1"));
+    if (parser.isSet("jack-cns2")) recorder.setJackCns1(parser.value("jack-cns2"));
     if (parser.isSet("jack-auto")) recorder.setJackAutoMode(true);
     if (parser.isSet("jack-trans")) recorder.setJackTransMode(true);
 }
@@ -90,8 +90,8 @@ void writeSettings(Recorder &recorder, QSettings &settings, QCommandLineParser &
         settings.setValue("splitMode", recorder.isSplitMode());
         settings.setValue("recordAtLaunch", recorder.isRecordAtLaunch());
         settings.setValue("processCmdLine", recorder.getProcessCmdLine());
-        settings.setValue("connections1", recorder.getJackConnections1());
-        settings.setValue("connections2", recorder.getJackConnections2());
+        settings.setValue("jackCns1", recorder.getJackCns1());
+        settings.setValue("jackCns2", recorder.getJackCns2());
         settings.setValue("jackAuto", recorder.isJackAutoMode());
         settings.setValue("jackTrans", recorder.isJackTransMode());
         settings.setValue("outputDir", recorder.getOutputDir().absolutePath());
