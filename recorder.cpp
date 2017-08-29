@@ -53,13 +53,14 @@
 #define RCD_WAIT_TIMEOUT_MS 1000
 #define RCD_SIG_CHANGE_COUNT 4
 
-#define RCD_FRAME_SIZE sizeof(float)
-#define RCD_BUFFER_CHANNEL_FRAMES 1024 // 1024 values per channel
-#define RCD_BUFFER_FRAMES (2*RCD_BUFFER_CHANNEL_FRAMES) // 2 channels of 1024 values
-#define RCD_BUFFER_SIZE (RCD_BUFFER_FRAMES*RCD_FRAME_SIZE)
+#define RCD_VALUE_SIZE sizeof(float)
+#define RCD_BUFFER_FRAMES 1024 // 1024 stereo frames
+#define RCD_BUFFER_VALUES (2*RCD_BUFFER_FRAMES) // 2 channels per frame
+#define RCD_BUFFER_SIZE (RCD_BUFFER_VALUES*RCD_VALUE_SIZE)
 
 #define RCD_RINGBUFFER_FRAMES (64*1024)
-#define RCD_RINGBUFFER_SIZE (2*RCD_RINGBUFFER_FRAMES*RCD_FRAME_SIZE)
+#define RCD_RINGBUFFER_VALUES (2*RCD_RINGBUFFER_FRAMES) // 2 channels per frame
+#define RCD_RINGBUFFER_SIZE (RCD_RINGBUFFER_VALUES*RCD_VALUE_SIZE)
 
 //=============================================================================
 // Jack callback to object calls
@@ -132,10 +133,10 @@ Recorder::Recorder(QString jackName)
     jackRingBuffer = jack_ringbuffer_create(RCD_RINGBUFFER_SIZE);
     jack_ringbuffer_reset(jackRingBuffer);
 
-    currentBuffer = new float[RCD_BUFFER_FRAMES];
+    currentBuffer = new float[RCD_BUFFER_VALUES];
     memset(currentBuffer, 0, RCD_BUFFER_SIZE);
 
-    alternateBuffer = new float[RCD_BUFFER_FRAMES];
+    alternateBuffer = new float[RCD_BUFFER_VALUES];
     memset(alternateBuffer, 0, RCD_BUFFER_SIZE);
 
     // start jack client
@@ -184,7 +185,7 @@ int Recorder::jackProcess(jack_nframes_t nframes)
     // the ringbuffer will transmit data to reorder thread (non RT)
     size_t rbspace = jack_ringbuffer_write_space(jackRingBuffer);
 
-    if (rbspace < (2*nframes*RCD_FRAME_SIZE)) {
+    if (rbspace < (2*nframes*RCD_VALUE_SIZE)) {
         // the ringbuffer is full, IO thread is too late because of IO locks or overloading
         overruns++;
         rc = 1;
@@ -196,9 +197,9 @@ int Recorder::jackProcess(jack_nframes_t nframes)
         // write interlived stereo data into the ringbuffer
         for(jack_nframes_t i = 0; i < nframes; i++) {
             value = in1[i];
-            jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), RCD_FRAME_SIZE);
+            jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), RCD_VALUE_SIZE);
             value = in2[i];
-            jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), RCD_FRAME_SIZE);
+            jack_ringbuffer_write (jackRingBuffer, (const char *)(&value), RCD_VALUE_SIZE);
         }
     }
     // wakeup recorder thread because there is data to process
@@ -323,21 +324,22 @@ void Recorder::run()
 }
 
 void Recorder::computePauseActivationMax() {
-    pauseActivationMax = (sampleRate * pauseActivationDelay ) / RCD_BUFFER_CHANNEL_FRAMES;
+    pauseActivationMax = (sampleRate * pauseActivationDelay ) / RCD_BUFFER_FRAMES;
 }
 
 void Recorder::computeCurrentBufferLevels() {
     float sumsqr_l = 0;
     float sumsqr_r = 0;
     int ibuf = 0;
-    for (int i = 0; i < RCD_BUFFER_CHANNEL_FRAMES; i++) {
+    for (int i = 0; i < RCD_BUFFER_FRAMES; i++) {
+        // 2 channels per frame
         sumsqr_l += currentBuffer[ibuf]*currentBuffer[ibuf];
         ibuf++;
         sumsqr_r += currentBuffer[ibuf]*currentBuffer[ibuf];
         ibuf++;
     }
-    float rms_l = sqrtf( sumsqr_l / ((float)RCD_BUFFER_CHANNEL_FRAMES) );
-    float rms_r = sqrtf( sumsqr_r / ((float)RCD_BUFFER_CHANNEL_FRAMES) );
+    float rms_l = sqrtf( sumsqr_l / ((float)RCD_BUFFER_FRAMES) );
+    float rms_r = sqrtf( sumsqr_r / ((float)RCD_BUFFER_FRAMES) );
     float db_l = log10f( rms_l ) * 10;
     float db_r = log10f( rms_r ) * 10;
     leftLevel = db_l < - 40 ? - 40 : db_l;
@@ -417,9 +419,10 @@ void Recorder::writeAlternateBuffer() {
 
 void Recorder::fadeinAlternateBuffer() {
     float gain = 0;
-    float gaininc = 1 / float(RCD_BUFFER_CHANNEL_FRAMES);
+    float gaininc = 1 / float(RCD_BUFFER_FRAMES);
     int ibuf = 0;
-    for (int i = 0; i < RCD_BUFFER_CHANNEL_FRAMES; i++) {
+    for (int i = 0; i < RCD_BUFFER_FRAMES; i++) {
+        // 2 channels per frame
         alternateBuffer[ibuf++] *= gain;
         alternateBuffer[ibuf++] *= gain;
         gain += gaininc;
@@ -428,9 +431,10 @@ void Recorder::fadeinAlternateBuffer() {
 
 void Recorder::fadeoutAlternateBuffer() {
     float gain = 1;
-    float gaininc = 1 / float(RCD_BUFFER_CHANNEL_FRAMES);
+    float gaininc = 1 / float(RCD_BUFFER_FRAMES);
     int ibuf = 0;
-    for (int i = 0; i < RCD_BUFFER_CHANNEL_FRAMES; i++) {
+    for (int i = 0; i < RCD_BUFFER_FRAMES; i++) {
+        // 2 channels per frame
         alternateBuffer[ibuf++] *= gain;
         alternateBuffer[ibuf++] *= gain;
         gain -= gaininc;
