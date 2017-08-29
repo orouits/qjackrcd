@@ -5,7 +5,7 @@ isEmpty(PREFIX):PREFIX = /usr/local
 isEmpty(BINDIR):BINDIR = $$PREFIX/bin
 isEmpty(DATADIR):DATADIR = $$PREFIX/share
 
-VERSION = 1.1.0
+VERSION = 1.2.0
 TARGET = qjackrcd
 TEMPLATE = app
 
@@ -43,7 +43,6 @@ TRANSLATIONS += \
     qjackrcd_de.ts \
 
 DISTFILES += \
-    manpage.sgml \
     Doxyfile \
     qjackrcd.1.sgml
 
@@ -95,6 +94,7 @@ man.target = qjackrcd.1.gz
 man.depends = qjackrcd.1.sgml
 man.commands = docbook-to-man $$man.depends | gzip > $$man.target
 QMAKE_EXTRA_TARGETS += man
+POST_TARGETDEPS += $$man.target
 QMAKE_CLEAN += $$man.target
 
 

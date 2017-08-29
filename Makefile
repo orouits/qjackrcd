@@ -32,8 +32,8 @@ DEL_DIR       = rmdir
 MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
-DISTNAME      = qjackrcd1.1.0
-DISTDIR = /home/ol/src/qjackrcd/build/qjackrcd1.1.0
+DISTNAME      = qjackrcd1.2.0
+DISTDIR = /home/ol/src/qjackrcd/build/qjackrcd1.2.0
 LINK          = g++
 LFLAGS        = -m64 -Wl,-O1
 LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -ljack -lsndfile -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
@@ -67,8 +67,7 @@ OBJECTS       = build/main.o \
 		build/moc_recorder.o \
 		build/moc_qjrmeter.o \
 		build/moc_mainconsole.o
-DIST          = manpage.sgml \
-		Doxyfile \
+DIST          = Doxyfile \
 		qjackrcd.1.sgml \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -161,7 +160,7 @@ first: all
 
 ####### Build rules
 
-$(TARGET): prepare locale/qjackrcd_en.qm locale/qjackrcd_fr.qm locale/qjackrcd_it.qm locale/qjackrcd_cs.qm locale/qjackrcd_de.qm build/ui_mainwindow.h $(OBJECTS)  
+$(TARGET): prepare locale/qjackrcd_en.qm locale/qjackrcd_fr.qm locale/qjackrcd_it.qm locale/qjackrcd_cs.qm locale/qjackrcd_de.qm build/ui_mainwindow.h $(OBJECTS)  qjackrcd.1.gz
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: qjackrcd.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \

@@ -35,7 +35,6 @@ you must install doxygen before making documentations:
 
 make docs
 
-
 EXECUTE
 -------
 
@@ -51,6 +50,14 @@ RELEASES
 --------
 
 SNAPSHOT (testing)
+
+1.2.0 (stable)
+- FIX: conflicts between jack transport and record at launch feature in some cases.
+- FIX: internal recording buffer size not adjusted (too long).
+- Add recorded size indicators in status bar
+- Add command line parser with all options
+- Add a console mode only (no GUI) for automation purpose
+- Add a man page with all options decribed.
 
 1.1.2 (stable)
 - Add an option to be in record state at launch time
