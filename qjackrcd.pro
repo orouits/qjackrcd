@@ -80,7 +80,7 @@ INSTALLS += target \
             translations \
             desktop \
             icon \
-            manpage
+            manpage \
 
 # custom docs target
 docs.target = docs
