@@ -1,0 +1,7 @@
+build
+locale
+Makefile
+configure
+*.pro.user*
+*.gz
+qjackrcd
