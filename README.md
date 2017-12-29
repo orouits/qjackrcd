@@ -54,6 +54,9 @@ sudo make install
 
 **SNAPSHOT (testing)**
 
+**1.2.1 (stable)**
+* no new software modification, transfer to GITHUB with documentation and project adaptation.
+
 **1.2.0 (stable)**
 * FIX: conflicts between jack transport and record at launch feature in some cases.
 * FIX: internal recording buffer size not adjusted (too long).
