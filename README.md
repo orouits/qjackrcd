@@ -23,7 +23,7 @@ Olivier ROUITS <olivier.rouits@free.fr>
 
 ## COMPILE
 
-```bash
+```sh
 qmake -config release
 make clean
 make
