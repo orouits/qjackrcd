@@ -34,7 +34,7 @@ then
     echo "### Make ${ARCNAME} tag in GIT"
     git commit -m "${ARCNAME}" -a
     git tag -a "${ARCNAME}" -m "${ARCNAME}"
-    git push
+    git push --tags
 #elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+[[:alpha:]]+$ ]]
 #then
     #not managed yet with git
