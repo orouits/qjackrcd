@@ -15,3 +15,5 @@ It can be used with QJackCtl.
 * Background WAV post processing for format conversion and signal processing
 * Automatic connection with first launched jack source, store/restore jack connections facility
 * CLI mode for automation
+
+Docxygen view [Doxygen code](html/index.html)
