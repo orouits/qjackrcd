@@ -23,7 +23,7 @@ Olivier ROUITS <olivier.rouits@free.fr>
 
 ## COMPILE
 
-```sh
+```
 qmake -config release
 make clean
 make
@@ -33,22 +33,22 @@ make
 
 you must install doxygen before making documentations:
 
-`
+```
 make doxy
-`
+```
 
 ## EXECUTE
 
-`
+```
 ./qjackrcd
-`
+```
 
 
 ## INSTALL
 
-`
+```
 sudo make install
-`
+```
 
 # RELEASES
 
