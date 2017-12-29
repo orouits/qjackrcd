@@ -47,7 +47,7 @@ DISTFILES += \
     qjackrcd.1.sgml
 
 OTHER_FILES += \
-    README \
+    README.md \
     LICENSE \
     publish.sh
 
