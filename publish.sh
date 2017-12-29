@@ -27,12 +27,12 @@ rm -rf ".tmp"
 if [[ "${RELEASE}" == "SNAPSHOT" ]]
 then
     echo "### Commit in GIT"
-    git commit -m "${ARCNAME}"
+    git commit -m "${ARCNAME}" -a
     git push
 elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$ ]]
 then
     echo "### Make ${ARCNAME} tag in GIT"
-    git commit -m "${ARCNAME}"
+    git commit -m "${ARCNAME}" -a
     git tag -a ${ARCNAME} -m "${ARCNAME}"
     git push
 #elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+[[:alpha:]]+$ ]]
