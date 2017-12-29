@@ -16,4 +16,4 @@ It can be used with QJackCtl.
 * Automatic connection with first launched jack source, store/restore jack connections facility
 * CLI mode for automation
 
-Docxygen view [Doxygen code](html/index.html)
+[Doxygen code](html)
