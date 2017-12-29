@@ -12,7 +12,7 @@ make distclean  &>/dev/null
 echo "### Make release ${ARCNAME} from scratch"
 qmake -config release
 make
-make docs
+make doxy
 
 echo "### Make tar file ${ARCNAME}.tar.gz"
 mkdir -p ".tmp/${ARCNAME}"
@@ -26,27 +26,18 @@ rm -rf ".tmp"
 
 if [[ "${RELEASE}" == "SNAPSHOT" ]]
 then
-    echo "### Commit in SVN"
-    svn ci -m "${ARCNAME}"
-    echo "### publish ${ARCNAME} archive to TESTING"
-    scp "${ARCNAME}.tar.gz" "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/testing/"
-    scp README "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/"
+    echo "### Commit in GIT"
+    git commit -m "${ARCNAME}"
+    git push
 elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$ ]]
 then
-    echo "### Make tag in SVN /tags/${ARCNAME}"
-    svn ci -m "${ARCNAME}"
-    svn cp . "svn+ssh://orouits@svn.code.sf.net/p/qjackrcd/code/tags/${ARCNAME}" -m "${ARCNAME}"
-    echo "### publish ${ARCNAME} archive to STABLE"
-    scp "${ARCNAME}.tar.gz" "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/stable/"
-    scp README "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/"
-elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+[[:alpha:]]+$ ]]
-then
-    echo "### Make tag in SVN /tags/${ARCNAME}"
-    svn ci -m "${ARCNAME}"
-    svn cp . "svn+ssh://orouits@svn.code.sf.net/p/qjackrcd/code/tags/${ARCNAME}" -m "${ARCNAME}"
-    echo "### publish ${ARCNAME} archive to TESTING"
-    scp "${ARCNAME}.tar.gz" "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/testing/"
-    scp README "orouits,qjackrcd@frs.sourceforge.net:/home/frs/project/q/qj/qjackrcd/"
+    echo "### Make ${ARCNAME} tag in GIT"
+    git commit -m "${ARCNAME}"
+    git tag -a ${ARCNAME} -m "${ARCNAME}"
+    git push
+#elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+[[:alpha:]]+$ ]]
+#then
+    #not managed yet with git
 fi
 
 echo "### Done."
