@@ -1,5 +1,4 @@
-OVERVIEW
---------
+# OVERVIEW
 
 QJackRcd is a simple QT application to record JACK server outputs (use it with QJackCtl)
 
@@ -16,38 +15,34 @@ The command is a simple bash command.
 
 Made with QTCreator, it Depends on jack, sndfile and qt5 libraries.
 
-AUTHOR
-------
+## AUTHOR
 
 Olivier ROUITS <olivier.rouits@free.fr>
 
-COMPILE
--------
+# BUILD
+
+## COMPILE
 
 qmake -config release
 make clean
 make
 
-DOCS
-----
+## DOXYGEN
 
 you must install doxygen before making documentations:
 
-make docs
+make doxy
 
-EXECUTE
--------
+## EXECUTE
 
 ./qjackrcd
 
 
-INSTALL
--------
+## INSTALL
 
 sudo make install
 
-RELEASES
---------
+# RELEASES
 
 SNAPSHOT (testing)
 
