@@ -1,4 +1,4 @@
 theme: jekyll-theme-cayman
 author: Olivier ROUITS
 author_email: olivier.rouits@gmail.com
-baseurl:/docs
+baseurl: /docs
