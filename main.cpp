@@ -34,7 +34,7 @@
 * Optionaly QJackRcd is enable to post-process each file record at closure in background mode. the command is a simple bash command.
 *
 * Made with QTCreator
-* It Depends on jack, sndfile and qt4 libraries.
+* It Depends on jack, sndfile and qt5 libraries.
 */
 #include "mainwindow.h"
 #include "mainconsole.h"
