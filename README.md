@@ -23,9 +23,11 @@ Olivier ROUITS <olivier.rouits@free.fr>
 
 ## COMPILE
 
+`
 qmake -config release
 make clean
 make
+`
 
 ## DOXYGEN
 
