@@ -60,7 +60,7 @@ QMAKE_EXTRA_TARGETS += prepare
 PRE_TARGETDEPS += prepare
 
 # custom translation compiler
-updateqm.input = TRANSLATIONS
+updateqm.input = $$TRANSLATIONS
 updateqm.output = $$LOCALE_DIR/${QMAKE_FILE_BASE}.qm
 updateqm.commands = lrelease ${QMAKE_FILE_IN} -qm $$LOCALE_DIR/${QMAKE_FILE_BASE}.qm
 updateqm.CONFIG += no_link target_predeps
@@ -83,11 +83,11 @@ INSTALLS += target \
             manpage \
 
 # custom docs target
-docs.target = docs
-docs.commands = doxygen Doxyfile
-docs.depends = Doxyfile $$SOURCES $$HEADERS
-QMAKE_EXTRA_TARGETS += docs
-QMAKE_CLEAN += -r $$docs.target
+doxy.target = doxy
+doxy.commands = doxygen Doxyfile
+doxy.depends = Doxyfile $$SOURCES $$HEADERS
+QMAKE_EXTRA_TARGETS += doxy
+QMAKE_CLEAN += -r docs/html
 
 # man pages
 man.target = qjackrcd.1.gz
