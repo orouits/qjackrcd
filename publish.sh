@@ -33,7 +33,7 @@ elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$ ]]
 then
     echo "### Make ${ARCNAME} tag in GIT"
     git commit -m "${ARCNAME}" -a
-    git tag -a ${ARCNAME} -m "${ARCNAME}"
+    git tag -a "${ARCNAME}" -m "${ARCNAME}"
     git push
 #elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+[[:alpha:]]+$ ]]
 #then
