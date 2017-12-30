@@ -48,6 +48,7 @@ class MainConsole : public QObject
 
 
     QString toGraphText(float level, float fixedLevel);
+    QString toTimeText(long secs);
     QString toBoolText(bool value) {return value ? "true" : "false";}
 
 public:

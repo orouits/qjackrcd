@@ -59,7 +59,7 @@ MainConsole::~MainConsole()
 
 void MainConsole::onRecorderStatusChanged()
 {
-    qout << "\r";
+    qout << "\r" << tr("[ENTER] to exit - ");
 
     if (recorder->isRecording()) {
         if (recorder->isPaused()) {
@@ -76,11 +76,13 @@ void MainConsole::onRecorderStatusChanged()
     else {
         qout << tr("Ready");
     }
-    qout << " ";
-    qout << recorder->getCurrentRecordSize()/1024 << "KB - ";
-    qout << recorder->getTotalRecordSize()/1024 << "KB ";
-
-    qout << "> " << toGraphText((recorder->getLeftLevel() + recorder->getRightLevel()) / 2, recorder->getPauseLevel());
+    qout << " "
+         << recorder->getCurrentRecordSize()/1024 << "KB"
+         << " [" << toTimeText(recorder->getCurrentRecordTimeSecs()) << "]"
+         << " - "
+         << recorder->getTotalRecordSize()/1024 << "KB"
+         << " [" << toTimeText(recorder->getTotalRecordTimeSecs()) << "]";
+    qout << " - " << toGraphText((recorder->getLeftLevel() + recorder->getRightLevel()) / 2, recorder->getPauseLevel());
     qout.flush();
 }
 void MainConsole::onInput()
@@ -102,4 +104,10 @@ QString MainConsole::toGraphText(float level, float fixedLevel)
         else str.append(".");
     }
     return str;
+}
+
+QString MainConsole::toTimeText(long secs)
+{
+    // cannot use QTime because it wraps after 24h
+    return QString("%1:%2:%3").arg(secs/3600,2,10,QLatin1Char('0')).arg((secs/60)%60,2,10,QLatin1Char('0')).arg(secs%60,2,10,QLatin1Char('0'));
 }

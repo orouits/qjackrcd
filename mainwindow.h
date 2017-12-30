@@ -57,6 +57,7 @@ private:
     QIcon *iconRed;
     QIcon *iconOrange;
 
+    QString toTimeText(long secs);
 
 private slots:
     void on_pauseLevelSpin_valueChanged(double value);

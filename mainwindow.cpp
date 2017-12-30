@@ -131,28 +131,33 @@ void MainWindow::onRecorderStatusChanged()
             ui->postLastEdit->setText(recorder->getProcessFilePath());
 
         QString statusMessage;
-        QTextStream str(&statusMessage);
+        QTextStream strm(&statusMessage);
         if (recorder->isRecording()) {
             ui->recButton->setEnabled(true);
             if (recorder->isPaused()) {
                 ui->recButton->setIcon(*iconOrange);
-                str << tr("Waiting for sound...");
+                strm << tr("Waiting for sound...");
             }
             else {
                 ui->recButton->setIcon(*iconRed);
-                str << tr("Recording...");
+                strm << tr("Recording...");
             }
         }
         else if (!recorder->isRecordEnabled()) {
             ui->recButton->setEnabled(false);
-            str << tr("Disabled");
+            strm << tr("Disabled");
         }
         else {
             ui->recButton->setEnabled(true);
             ui->recButton->setIcon(*iconGreen);
-            str << tr("Ready");
+            strm << tr("Ready");
         }
-        str << " " << recorder->getCurrentRecordSize()/1024 << "KB - " << recorder->getTotalRecordSize()/1024 << "KB";
+        strm << " "
+             << recorder->getCurrentRecordSize()/1024 << "KB"
+             << " [" << toTimeText(recorder->getCurrentRecordTimeSecs()) << "]"
+             << " - "
+             << recorder->getTotalRecordSize()/1024 << "KB"
+             << " [" << toTimeText(recorder->getTotalRecordTimeSecs()) << "]";
         ui->statusBar->showMessage(statusMessage);
     }
 }
@@ -212,4 +217,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
+QString MainWindow::toTimeText(long secs)
+{
+    // cannot use QTime because it wraps after 24h
+    return QString("%1:%2:%3").arg(secs/3600,2,10,QLatin1Char('0')).arg((secs/60)%60,2,10,QLatin1Char('0')).arg(secs%60,2,10,QLatin1Char('0'));
+}
 

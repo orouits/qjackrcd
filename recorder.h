@@ -37,7 +37,6 @@
 #include <QQueue>
 #include <QDir>
 
-
 /**
 * @class Recorder
 * @brief Encapsulation of all recording feature without GUI link.
@@ -161,6 +160,9 @@ public:
     float getRightLevel() { return rightLevel; }
     long getCurrentRecordSize() { return currentRecordSize; }
     long getTotalRecordSize() { return totalRecordSize; }
+    long getCurrentRecordTimeSecs();
+    long getTotalRecordTimeSecs();
+    int getSampleRate() { return sampleRate; }
 
 signals:
     void statusChanged();

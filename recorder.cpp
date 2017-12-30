@@ -55,12 +55,12 @@
 
 #define RCD_VALUE_SIZE sizeof(float)
 #define RCD_BUFFER_FRAMES 1024 // 1024 stereo frames
-#define RCD_BUFFER_VALUES (2*RCD_BUFFER_FRAMES) // 2 channels per frame
-#define RCD_BUFFER_SIZE (RCD_BUFFER_VALUES*RCD_VALUE_SIZE)
+#define RCD_BUFFER_VALUES (2 * RCD_BUFFER_FRAMES) // 2 channel per frame
+#define RCD_BUFFER_SIZE (RCD_BUFFER_VALUES * RCD_VALUE_SIZE)
 
 #define RCD_RINGBUFFER_FRAMES (64*1024)
-#define RCD_RINGBUFFER_VALUES (2*RCD_RINGBUFFER_FRAMES) // 2 channels per frame
-#define RCD_RINGBUFFER_SIZE (RCD_RINGBUFFER_VALUES*RCD_VALUE_SIZE)
+#define RCD_RINGBUFFER_VALUES (2 * RCD_RINGBUFFER_FRAMES) // 2 channel per frame
+#define RCD_RINGBUFFER_SIZE (RCD_RINGBUFFER_VALUES * RCD_VALUE_SIZE)
 
 //=============================================================================
 // Jack callback to object calls
@@ -92,6 +92,7 @@ void jack_shutdown (void *recorder)
 
 Recorder::Recorder(QString jackName)
 {
+    // variables inititalisation (and default values).
     this->jackName = jackName;
     sndFile = NULL;
     outputDir = QDir::home();
@@ -226,6 +227,19 @@ void Recorder::jackShutdown()
 // Recorder public methods
 //=============================================================================
 
+bool Recorder::isRecordEnabled() {
+    return QFileInfo(outputDir.absolutePath()).isWritable();
+}
+
+// current record time in seconds
+long Recorder::getCurrentRecordTimeSecs() {
+    return currentRecordSize / (sampleRate * 2 * RCD_VALUE_SIZE);
+}
+
+// total record time in seconds
+long Recorder::getTotalRecordTimeSecs() {
+    return totalRecordSize / (sampleRate  * 2 * RCD_VALUE_SIZE);
+}
 
 //=============================================================================
 // Recorder internal methods
@@ -344,10 +358,6 @@ void Recorder::computeCurrentBufferLevels() {
     float db_r = log10f( rms_r ) * 10;
     leftLevel = db_l < - 40 ? - 40 : db_l;
     rightLevel = db_r < - 40 ? - 40 : db_r;
-}
-
-bool Recorder::isRecordEnabled() {
-    return QFileInfo(outputDir.absolutePath()).isWritable();
 }
 
 void Recorder::computeDiskSpace() {
