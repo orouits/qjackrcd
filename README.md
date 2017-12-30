@@ -1,19 +1,19 @@
 # OVERVIEW
 
-QJackRcd is a simple QT application to record JACK server outputs (use it with QJackCtl)
+QJackRcd is a simple QT application to record JACK server outputs (use it with QJackCtl/Cadence/...)
 
 The initial goal of this project is to record from an old tape,
 with an automatic split/pause feature when you are away.
 
-Another goal is to have a litle tool ready to use with a minimum of configuration for simple stereo recording needs.
+Another goal is to have a little tool ready to use with a minimum of configuration for simple stereo recording needs.
 
 It manages natively silence by threshold and delay.
 Silence event can be used to pause the record or to split files by closing the current record and opening a new one.
 
-Optionaly QJackRcd is enable to post-process each file record at closure in background mode.
+Optionally QJackRcd is enable to post-process each file record at closure in background mode.
 The command is a simple bash command.
 
-Made with QTCreator, it Depends on jack, sndfile and qt5 libraries.
+Made with QTCreator, it depends on jack, sndfile and qt5 libraries.
 
 ## AUTHOR
 
