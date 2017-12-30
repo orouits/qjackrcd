@@ -21,7 +21,7 @@ Olivier ROUITS <olivier.rouits@free.fr>
 
 # BUILD
 
-**Compile**
+**Compile & Man page**
 
 ```
 qmake -config release
@@ -29,9 +29,9 @@ make clean
 make
 ```
 
-**Doxygen**
+**Code documentation**
 
-you must install doxygen before making documentations:
+*doxygen is required.*
 
 ```
 make doxy
