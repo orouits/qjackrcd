@@ -82,18 +82,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">OVERVIEW </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>QJackRcd is a simple QT application to record JACK server outputs (use it with QJackCtl)</p>
+<div class="textblock"><p>QJackRcd is a simple QT application to record JACK server outputs (use it with QJackCtl/Cadence/...)</p>
 <p>The initial goal of this project is to record from an old tape, with an automatic split/pause feature when you are away.</p>
-<p>Another goal is to have a litle tool ready to use with a minimum of configuration for simple stereo recording needs.</p>
+<p>Another goal is to have a little tool ready to use with a minimum of configuration for simple stereo recording needs.</p>
 <p>It manages natively silence by threshold and delay. Silence event can be used to pause the record or to split files by closing the current record and opening a new one.</p>
-<p>Optionaly QJackRcd is enable to post-process each file record at closure in background mode. The command is a simple bash command.</p>
-<p>Made with QTCreator, it Depends on jack, sndfile and qt5 libraries.</p>
+<p>Optionally QJackRcd is enable to post-process each file record at closure in background mode. The command is a simple bash command.</p>
+<p>Made with QTCreator, it depends on jack, sndfile and qt5 libraries.</p>
 <h2>AUTHOR</h2>
-<p>Olivier ROUITS <a href="#" onclick="location.href='mai'+'lto:'+'oli'+'vi'+'er.'+'ro'+'uit'+'s@'+'gma'+'il'+'.co'+'m'; return false;">olivi<span style="display: none;">.nosp@m.</span>er.r<span style="display: none;">.nosp@m.</span>ouits<span style="display: none;">.nosp@m.</span>@gma<span style="display: none;">.nosp@m.</span>il.co<span style="display: none;">.nosp@m.</span>m</a></p>
+<p>Olivier ROUITS <a href="#" onclick="location.href='mai'+'lto:'+'oli'+'vi'+'er.'+'ro'+'uit'+'s@'+'fre'+'e.'+'fr'; return false;">olivi<span style="display: none;">.nosp@m.</span>er.r<span style="display: none;">.nosp@m.</span>ouits<span style="display: none;">.nosp@m.</span>@fre<span style="display: none;">.nosp@m.</span>e.fr</a></p>
 <h1>BUILD</h1>
-<p><b>Compile</b></p>
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;qmake -config release</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;make clean</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;make</div></div><!-- fragment --><p><b>Doxygen</b></p>
-<p>you must install doxygen before making documentations:</p>
+<p><b>Compile &amp; Man page</b></p>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;qmake -config release</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;make clean</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;make</div></div><!-- fragment --><p><b>Code documentation</b></p>
+<p><em>doxygen is required.</em></p>
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;make doxy</div></div><!-- fragment --><p><b>Execute</b></p>
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;./qjackrcd</div></div><!-- fragment --><p><b>Install</b></p>
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;sudo make install</div></div><!-- fragment --><h1>RELEASES</h1>
@@ -166,7 +166,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 29 2017 22:05:02 for QJackRcd by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Dec 30 2017 20:48:14 for QJackRcd by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>
