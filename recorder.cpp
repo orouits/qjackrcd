@@ -55,11 +55,11 @@
 
 #define RCD_VALUE_SIZE sizeof(float)
 #define RCD_BUFFER_FRAMES 1024 // 1024 stereo frames
-#define RCD_BUFFER_VALUES (2 * RCD_BUFFER_FRAMES) // 2 channel per frame
+#define RCD_BUFFER_VALUES (2 * RCD_BUFFER_FRAMES) // 2 channels per frame
 #define RCD_BUFFER_SIZE (RCD_BUFFER_VALUES * RCD_VALUE_SIZE)
 
 #define RCD_RINGBUFFER_FRAMES (64*1024)
-#define RCD_RINGBUFFER_VALUES (2 * RCD_RINGBUFFER_FRAMES) // 2 channel per frame
+#define RCD_RINGBUFFER_VALUES (2 * RCD_RINGBUFFER_FRAMES) // 2 channels per frame
 #define RCD_RINGBUFFER_SIZE (RCD_RINGBUFFER_VALUES * RCD_VALUE_SIZE)
 
 //=============================================================================
