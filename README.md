@@ -17,7 +17,7 @@ Made with QTCreator, it Depends on jack, sndfile and qt5 libraries.
 
 ## AUTHOR
 
-Olivier ROUITS <olivier.rouits@gmail.com>
+Olivier ROUITS <olivier.rouits@free.fr>
 
 # BUILD
 
