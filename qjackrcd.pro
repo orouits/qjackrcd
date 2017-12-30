@@ -87,7 +87,7 @@ doxy.target = doxy
 doxy.commands = doxygen Doxyfile
 doxy.depends = Doxyfile $$SOURCES $$HEADERS
 QMAKE_EXTRA_TARGETS += doxy
-QMAKE_CLEAN += -r docs/html
+QMAKE_CLEAN += -r build/html
 
 # man pages
 man.target = qjackrcd.1.gz
