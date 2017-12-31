@@ -12,12 +12,12 @@ make distclean  &>/dev/null
 echo "### Make release ${RELEASE} from scratch"
 qmake -config release
 make
-make doxy
+#make doxy
 
 echo "### Make tar file ${ARCNAME}.tar.gz"
 mkdir -p ".tmp/${ARCNAME}"
 
-cp -r Makefile qjackrcd qjackrcd.1.gz qjackrcd.desktop README.md LICENSE locale -r .tmp/${ARCNAME}
+cp -r * -r .tmp/${ARCNAME}
 cd .tmp
 tar -czf "../${ARCNAME}.tar.gz" "${ARCNAME}"
 cd ..
