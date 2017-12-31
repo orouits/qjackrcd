@@ -27,12 +27,19 @@ rm -rf ".tmp"
 if [[ "${RELEASE}" == "SNAPSHOT" ]]
 then
     echo "### Commit in GIT"
-    git commit -m "${RELEASE}" -a
+    git commit -m "prepare ${RELEASE}" -a
     git push
+    echo "### Remove ${RELEASE} tag in GIT"
+    git tag -d ${RELEASE}
+    git push origin :${RELEASE}
+    echo "### Make ${RELEASE} tag in GIT"
+    git tag -a "${RELEASE}" -m "publish ${RELEASE}"
+    git push --tags
 elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$ ]]
 then
     echo "### Commit in GIT"
     git commit -m "prepare v${RELEASE}" -a
+    git push
     echo "### Make v${RELEASE} tag in GIT"
     git tag -a "v${RELEASE}" -m "publish v${RELEASE}"
     git push --tags
