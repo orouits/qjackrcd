@@ -2,14 +2,14 @@
 
 RELEASE="${1:-SNAPSHOT}"
 
-ARCNAME="qjackrcd-${RELEASE}"
+ARCNAME="qjackrcd-bin-${RELEASE}"
 
 echo "### Clean all"
-rm qjackrcd-*.tar.gz &>/dev/null
+rm *.tar.gz &>/dev/null
 rm -rf ".tmp" &>/dev/null
 make distclean  &>/dev/null
 
-echo "### Make release ${ARCNAME} from scratch"
+echo "### Make release ${RELEASE} from scratch"
 qmake -config release
 make
 make doxy
@@ -17,7 +17,7 @@ make doxy
 echo "### Make tar file ${ARCNAME}.tar.gz"
 mkdir -p ".tmp/${ARCNAME}"
 
-cp -r * .tmp/${ARCNAME}
+cp -r Makefile qjackrcd qjackrcd.1.gz qjackrcd.desktop README.md LICENCE locale -r .tmp/${ARCNAME}
 cd .tmp
 tar -czf "../${ARCNAME}.tar.gz" "${ARCNAME}"
 cd ..
@@ -27,13 +27,14 @@ rm -rf ".tmp"
 if [[ "${RELEASE}" == "SNAPSHOT" ]]
 then
     echo "### Commit in GIT"
-    git commit -m "${ARCNAME}" -a
+    git commit -m "${RELEASE}" -a
     git push
 elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$ ]]
 then
-    echo "### Make ${ARCNAME} tag in GIT"
-    git commit -m "${ARCNAME}" -a
-    git tag -a "${ARCNAME}" -m "${ARCNAME}"
+    echo "### Commit in GIT"
+    git commit -m "prepare v${RELEASE}" -a
+    echo "### Make v${RELEASE} tag in GIT"
+    git tag -a "v${RELEASE}" -m "publish v${RELEASE}"
     git push --tags
 #elif [[ "${RELEASE}" =~ ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+[[:alpha:]]+$ ]]
 #then
