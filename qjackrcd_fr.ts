@@ -109,6 +109,11 @@
         <translation>Transport jack actif</translation>
     </message>
     <message>
+        <location filename="mainwindow.ui" line="286"/>
+        <source>Record at launch</source>
+        <translation>Enregistrer au démarrage</translation>
+    </message>
+    <message>
         <location filename="mainwindow.ui" line="406"/>
         <source>Exit</source>
         <translation>Quitter</translation>
