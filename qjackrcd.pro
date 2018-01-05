@@ -60,7 +60,7 @@ QMAKE_EXTRA_TARGETS += prepare
 PRE_TARGETDEPS += prepare
 
 # custom translation compiler
-updateqm.input = $$TRANSLATIONS
+updateqm.input = TRANSLATIONS
 updateqm.output = $$LOCALE_DIR/${QMAKE_FILE_BASE}.qm
 updateqm.commands = lrelease ${QMAKE_FILE_IN} -qm $$LOCALE_DIR/${QMAKE_FILE_BASE}.qm
 updateqm.CONFIG += no_link target_predeps
