@@ -54,7 +54,10 @@ sudo make install
 
 **SNAPSHOT (testing)**
 
-**1.2.2 (stable)**
+**1.2.3 (stable)**
+- FIX: translate files not compiled by make with 1.2.2 #8
+
+**1.2.2 (unstable)**
 - FIX: initital window size too short #6
 - new recorded time indicators #1
 
